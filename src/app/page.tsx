@@ -1,4 +1,5 @@
 import { Activity, TrendingUp, Target, Calendar, Dumbbell, Heart } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -25,9 +26,11 @@ export default function Home() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="px-8 py-6 text-base hover:scale-105 shadow-lg hover:shadow-xl">
-              Start Tracking Free
-            </Button>
+            <Link href="/signup">
+              <Button size="lg" className="px-8 py-6 text-base hover:scale-105 shadow-lg hover:shadow-xl transition-transform">
+                Start Tracking Free
+              </Button>
+            </Link>
             <Button size="lg" variant="outline" className="px-8 py-6 text-base">
               View Demo
             </Button>
