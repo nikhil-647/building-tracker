@@ -1,26 +1,32 @@
 "use client"
 
-import { useState } from "react";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Mail, Lock, User, ArrowLeft } from "lucide-react";
+import { Activity, Mail, Lock, User, ArrowLeft, AlertCircle } from "lucide-react";
+import { signup } from "./actions";
+
+// Submit button component that shows loading state
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  
+  return (
+    <Button 
+      type="submit" 
+      disabled={pending}
+      className="w-full py-6 text-base font-semibold hover:scale-[1.02] shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {pending ? "Creating account..." : "Create Account"}
+    </Button>
+  );
+}
 
 export default function SignUpPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: ""
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle signup logic here
-    console.log("Sign up:", formData);
-  };
+  const [state, formAction] = useActionState(signup, { errors: {} });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center p-4">
@@ -43,7 +49,19 @@ export default function SignUpPage() {
           </CardHeader>
           
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form action={formAction} className="space-y-4">
+              {/* Form-level errors */}
+              {state.errors?._form && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start gap-2">
+                  <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm">
+                    {state.errors._form.map((error, index) => (
+                      <p key={index}>{error}</p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Name Field */}
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-slate-700">Full Name</Label>
@@ -51,14 +69,20 @@ export default function SignUpPage() {
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <Input
                     id="name"
+                    name="name"
                     type="text"
                     placeholder="John Doe"
-                    className="pl-10"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    defaultValue={state.data?.name || ''}
+                    className={`pl-10 ${state.errors?.name ? 'border-red-500' : ''}`}
                     required
                   />
                 </div>
+                {state.errors?.name && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {state.errors.name[0]}
+                  </p>
+                )}
               </div>
 
               {/* Email Field */}
@@ -68,14 +92,20 @@ export default function SignUpPage() {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <Input
                     id="email"
+                    name="email"
                     type="email"
                     placeholder="you@example.com"
-                    className="pl-10"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    defaultValue={state.data?.email || ''}
+                    className={`pl-10 ${state.errors?.email ? 'border-red-500' : ''}`}
                     required
                   />
                 </div>
+                {state.errors?.email && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {state.errors.email[0]}
+                  </p>
+                )}
               </div>
 
               {/* Password Field */}
@@ -85,14 +115,20 @@ export default function SignUpPage() {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <Input
                     id="password"
+                    name="password"
                     type="password"
                     placeholder="••••••••"
-                    className="pl-10"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    defaultValue={state.data?.password || ''}
+                    className={`pl-10 ${state.errors?.password ? 'border-red-500' : ''}`}
                     required
                   />
                 </div>
+                {state.errors?.password && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {state.errors.password[0]}
+                  </p>
+                )}
               </div>
 
               {/* Confirm Password Field */}
@@ -102,23 +138,24 @@ export default function SignUpPage() {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <Input
                     id="confirmPassword"
+                    name="confirmPassword"
                     type="password"
                     placeholder="••••••••"
-                    className="pl-10"
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    defaultValue={state.data?.confirmPassword || ''}
+                    className={`pl-10 ${state.errors?.confirmPassword ? 'border-red-500' : ''}`}
                     required
                   />
                 </div>
+                {state.errors?.confirmPassword && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {state.errors.confirmPassword[0]}
+                  </p>
+                )}
               </div>
 
               {/* Submit Button */}
-              <Button 
-                type="submit" 
-                className="w-full py-6 text-base font-semibold hover:scale-[1.02] shadow-lg hover:shadow-xl transition-all"
-              >
-                Create Account
-              </Button>
+              <SubmitButton />
 
               {/* Divider */}
               <div className="relative my-6">
