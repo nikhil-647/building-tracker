@@ -1,12 +1,10 @@
 import { Navbar } from '@/components/navbar'
 import { DashboardStats } from '@/components/dashboard-stats'
 import { ActivityProgress } from '@/components/activity-progress'
+import { HeroButtons } from '@/components/hero-buttons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Dumbbell, Activity } from 'lucide-react'
 
 export default function Dashboard() {
-  // Mock user data - in real app, this would come from session
   const user = {
     name: "John Doe",
     email: "john@example.com",
@@ -28,16 +26,7 @@ export default function Dashboard() {
           </div>
           
           {/* Hero Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="h-12 px-8">
-              <Dumbbell className="h-5 w-5 mr-2" />
-              Log Workout
-            </Button>
-            <Button size="lg" variant="outline" className="h-12 px-8">
-              <Activity className="h-5 w-5 mr-2" />
-              Log Activity
-            </Button>
-          </div>
+          <HeroButtons />
         </div>
 
         {/* Stats Grid */}
