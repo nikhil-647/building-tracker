@@ -1,6 +1,11 @@
 import { Providers } from './providers'
 import './globals.css'
 
+export const metadata = {
+  title: 'Building Tracker - Project Management Dashboard',
+  description: 'A comprehensive building project management and tracking application',
+}
+
 export default function RootLayout({
   children,
 }: {
