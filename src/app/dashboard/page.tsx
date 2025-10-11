@@ -3,17 +3,20 @@ import { DashboardStats } from '@/components/dashboard-stats'
 import { ActivityProgress } from '@/components/activity-progress'
 import { HeroButtons } from '@/components/hero-buttons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { auth } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
-export default function Dashboard() {
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-    image: null
+export default async function Dashboard() {
+  const session = await auth()
+  
+  // Redirect to login if not authenticated
+  if (!session?.user) {
+    redirect('/login')
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar user={user} />
+      <Navbar user={session.user} />
       
       <main className="container mx-auto px-4 py-6 space-y-6">
         {/* Header Section */}

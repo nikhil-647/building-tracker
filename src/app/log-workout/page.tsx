@@ -1,6 +1,8 @@
 'use client'
 
 import * as React from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/navbar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -117,6 +119,9 @@ interface WorkoutSession {
 }
 
 export default function LogWorkout() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  
   const [workoutPlan, setWorkoutPlan] = React.useState<WorkoutPlan>({
     id: 1,
     muscleGroups: {
@@ -140,11 +145,12 @@ export default function LogWorkout() {
     exercises: []
   })
 
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-    image: null
-  }
+  // Redirect to login if not authenticated
+  React.useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login')
+    }
+  }, [status, router])
 
   const toggleMuscleGroup = (muscleGroup: string) => {
     const newExpanded = new Set(expandedMuscleGroups)
@@ -301,9 +307,26 @@ export default function LogWorkout() {
 
   const filteredMuscleGroups = muscleGroups
 
+  // Show loading state while checking authentication
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Don't render if not authenticated (redirect will happen via useEffect)
+  if (!session?.user) {
+    return null
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      <Navbar user={user} />
+      <Navbar user={session.user} />
       
       <main className="container mx-auto px-4 py-6 space-y-6">
         {/* Header Section */}
@@ -317,11 +340,8 @@ export default function LogWorkout() {
         </div>
 
         {/* Workout Plan Header */}
-        <Card>
-          <CardHeader 
-            className="cursor-pointer hover:bg-accent/50 transition-colors"
-            onClick={() => setIsWorkoutPlanExpanded(!isWorkoutPlanExpanded)}
-          >
+        <Card className="hover:bg-accent/50 transition-colors cursor-pointer" onClick={() => setIsWorkoutPlanExpanded(!isWorkoutPlanExpanded)}>
+          <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span className="text-xl font-bold">My Workout Plan</span>
               {isWorkoutPlanExpanded ? (
@@ -346,12 +366,9 @@ export default function LogWorkout() {
                   const isExpanded = expandedMuscleGroups.has(muscleGroup.name)
                   
                   return (
-                    <Card key={muscleGroup.id} className="overflow-hidden">
-                      <CardHeader 
-                        className="cursor-pointer hover:bg-accent/50 transition-colors"
-                        onClick={() => toggleMuscleGroup(muscleGroup.name)}
-                      >
-                        <CardTitle className="flex items-center justify-between">
+                    <Card key={muscleGroup.id} className="overflow-hidden hover:bg-accent/50">
+                      <CardHeader>
+                        <CardTitle className="flex items-center justify-between" onClick={() => toggleMuscleGroup(muscleGroup.name)}>
                           <div className="flex items-center gap-3">
                             {isExpanded ? (
                               <ChevronDown className="h-5 w-5 text-muted-foreground" />
