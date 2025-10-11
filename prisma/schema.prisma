@@ -78,8 +78,9 @@ model Exercise {
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  muscleGroup MuscleGroup @relation(fields: [muscleGroupId], references: [id], onDelete: Cascade)
-  user        User?       @relation("ExerciseAddedBy", fields: [addedBy], references: [id], onDelete: Cascade)
+  muscleGroup       MuscleGroup       @relation(fields: [muscleGroupId], references: [id], onDelete: Cascade)
+  user              User?             @relation("ExerciseAddedBy", fields: [addedBy], references: [id], onDelete: Cascade)
+  exerciseTemplates ExerciseTemplate[]
 
   @@index([addedBy], map: "idx_exercise_user")
   @@map("exercises")
@@ -90,19 +91,21 @@ model Exercise {
 // ===========================================================
 model ExerciseTemplate {
   id              Int       @id @default(autoincrement())
-  name            String    @db.VarChar(100)
+  exerciseId      Int       @map("exercise_id")
   exerciseGroupId Int       @map("exercise_group_id")
   userId          Int       @map("user_id")
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  muscleGroup  MuscleGroup   @relation(fields: [exerciseGroupId], references: [id], onDelete: Cascade)
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise     Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  muscleGroup  MuscleGroup    @relation(fields: [exerciseGroupId], references: [id], onDelete: Cascade)
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   exerciseSets ExerciseSet[]
 
   @@unique([userId, exerciseGroupId])
   @@index([userId], map: "idx_exercise_template_user")
+  @@index([exerciseId], map: "idx_exercise_template_exercise")
   @@map("exercise_template")
 }
 
