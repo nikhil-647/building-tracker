@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Mail, Lock, User, ArrowLeft, AlertCircle } from "lucide-react";
 import { signup } from "./actions";
+import { toast } from 'sonner';
 
 // Submit button component that shows loading state
 function SubmitButton() {
@@ -27,6 +28,15 @@ function SubmitButton() {
 
 export default function SignUpPage() {
   const [state, formAction] = useActionState(signup, { errors: {} });
+
+  // Show toast notifications when errors occur
+  useEffect(() => {
+    if (state.errors?._form) {
+      toast.error('Signup failed', {
+        description: state.errors._form[0] || 'Please check your information and try again.'
+      })
+    }
+  }, [state.errors?._form])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center p-4">

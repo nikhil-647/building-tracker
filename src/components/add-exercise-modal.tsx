@@ -2,7 +2,6 @@
 
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
   Dialog,
@@ -19,39 +18,55 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Dumbbell, Save, X } from 'lucide-react'
+import { Dumbbell, Save, X, Loader2 } from 'lucide-react'
+import { getAvailableExercises, addExerciseToUserPlan } from '@/app/api/workout-plan/actions'
+import { toast } from 'sonner'
 
 interface AddExerciseModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (exerciseName: string, muscleGroup: string) => void
+  onSave: () => void
+  selectedMuscleGroup: string
 }
 
-const muscleGroups = [
-  { value: 'Chest', label: 'Chest' },
-  { value: 'Back', label: 'Back' },
-  { value: 'Shoulder', label: 'Shoulder' },
-  { value: 'Legs', label: 'Legs' },
-  { value: 'Bicep', label: 'Bicep' },
-  { value: 'Tricep', label: 'Tricep' },
-  { value: 'Abs', label: 'Abs' },
-  { value: 'Cardio', label: 'Cardio' },
-]
+export function AddExerciseModal({ isOpen, onClose, onSave, selectedMuscleGroup }: AddExerciseModalProps) {
+  const [selectedExerciseId, setSelectedExerciseId] = React.useState<string>('')
+  const [availableExercises, setAvailableExercises] = React.useState<Array<{ id: number; name: string; image: string | null }>>([])
+  const [errors, setErrors] = React.useState<{ exercise?: string; general?: string }>({})
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [isFetchingExercises, setIsFetchingExercises] = React.useState(false)
 
-export function AddExerciseModal({ isOpen, onClose, onSave }: AddExerciseModalProps) {
-  const [exerciseName, setExerciseName] = React.useState('')
-  const [selectedMuscleGroup, setSelectedMuscleGroup] = React.useState('')
-  const [errors, setErrors] = React.useState<{ name?: string; muscleGroup?: string }>({})
-
-  const handleSave = () => {
-    const newErrors: { name?: string; muscleGroup?: string } = {}
-    
-    if (!exerciseName.trim()) {
-      newErrors.name = 'Exercise name is required'
+  // Fetch available exercises when modal opens or muscle group changes
+  React.useEffect(() => {
+    if (isOpen && selectedMuscleGroup) {
+      fetchAvailableExercises()
     }
+  }, [isOpen, selectedMuscleGroup])
+
+  const fetchAvailableExercises = async () => {
+    setIsFetchingExercises(true)
+    setErrors({})
     
-    if (!selectedMuscleGroup) {
-      newErrors.muscleGroup = 'Please select a muscle group'
+    try {
+      const result = await getAvailableExercises(selectedMuscleGroup)
+      
+      if (result.success) {
+        setAvailableExercises(result.data)
+      } else {
+        setErrors({ general: result.error || 'Failed to load exercises' })
+      }
+    } catch (error) {
+      setErrors({ general: 'Failed to load exercises' })
+    } finally {
+      setIsFetchingExercises(false)
+    }
+  }
+
+  const handleSave = async () => {
+    const newErrors: { exercise?: string; general?: string } = {}
+    
+    if (!selectedExerciseId) {
+      newErrors.exercise = 'Please select an exercise'
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -59,22 +74,38 @@ export function AddExerciseModal({ isOpen, onClose, onSave }: AddExerciseModalPr
       return
     }
 
-    onSave(exerciseName.trim(), selectedMuscleGroup)
-    handleClose()
+    setIsLoading(true)
+    setErrors({})
+
+    try {
+      const result = await addExerciseToUserPlan(Number(selectedExerciseId), selectedMuscleGroup)
+      
+      if (result.success) {
+        toast.success('Exercise added successfully!', {
+          description: `${result.data?.exerciseName} has been added to your ${selectedMuscleGroup} workout plan.`
+        })
+        onSave()
+        handleClose()
+      } else {
+        toast.error('Failed to add exercise', {
+          description: result.error || 'An error occurred while adding the exercise.'
+        })
+        setErrors({ general: result.error || 'Failed to add exercise' })
+      }
+    } catch (error) {
+      toast.error('An unexpected error occurred', {
+        description: 'Please try again later.'
+      })
+      setErrors({ general: 'An unexpected error occurred' })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleClose = () => {
-    setExerciseName('')
-    setSelectedMuscleGroup('')
+    setSelectedExerciseId('')
     setErrors({})
     onClose()
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSave()
-    }
   }
 
   return (
@@ -86,67 +117,94 @@ export function AddExerciseModal({ isOpen, onClose, onSave }: AddExerciseModalPr
             Add New Exercise
           </DialogTitle>
           <DialogDescription>
-            Create a new exercise and assign it to a muscle group.
+            Select an exercise to add to your {selectedMuscleGroup} workout plan.
           </DialogDescription>
         </DialogHeader>
         
         <div className="grid gap-4 py-4">
+          {/* General Error Message */}
+          {errors.general && (
+            <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+              {errors.general}
+            </div>
+          )}
+
+          {/* Muscle Group - Disabled (Display Only) */}
           <div className="grid gap-2">
             <Label htmlFor="muscle-group">Muscle Group</Label>
-            <Select
-              value={selectedMuscleGroup}
-              onValueChange={(value) => {
-                setSelectedMuscleGroup(value)
-                if (errors.muscleGroup) {
-                  setErrors(prev => ({ ...prev, muscleGroup: undefined }))
-                }
-              }}
-            >
-              <SelectTrigger className={`w-full ${errors.muscleGroup ? 'border-destructive' : ''}`}>
-                <SelectValue placeholder="Non selected" />
-              </SelectTrigger>
-              <SelectContent>
-                {muscleGroups.map((group) => (
-                  <SelectItem key={group.value} value={group.value}>
-                    {group.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.muscleGroup && (
-              <p className="text-sm text-destructive">{errors.muscleGroup}</p>
-            )}
+            <div className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm">
+              {selectedMuscleGroup}
+            </div>
           </div>
           
+          {/* Exercise Name - Select Dropdown */}
           <div className="grid gap-2">
             <Label htmlFor="exercise-name">Exercise Name</Label>
-            <Input
-              id="exercise-name"
-              placeholder="e.g., Bench Press, Squats, Push-ups..."
-              value={exerciseName}
-              onChange={(e) => {
-                setExerciseName(e.target.value)
-                if (errors.name) {
-                  setErrors(prev => ({ ...prev, name: undefined }))
-                }
-              }}
-              onKeyDown={handleKeyDown}
-              className={errors.name ? 'border-destructive' : ''}
-            />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name}</p>
+            {isFetchingExercises ? (
+              <div className="flex items-center justify-center p-3 border rounded-md bg-muted/50">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <span className="text-sm text-muted-foreground">Loading exercises...</span>
+              </div>
+            ) : availableExercises.length === 0 ? (
+              <div className="p-3 text-sm text-muted-foreground bg-muted/50 rounded-md text-center">
+                No available exercises. All exercises for this muscle group have been added to your plan.
+              </div>
+            ) : (
+              <>
+                <Select
+                  value={selectedExerciseId}
+                  onValueChange={(value) => {
+                    setSelectedExerciseId(value)
+                    if (errors.exercise) {
+                      setErrors(prev => ({ ...prev, exercise: undefined }))
+                    }
+                  }}
+                >
+                  <SelectTrigger className={`w-full ${errors.exercise ? 'border-destructive' : ''}`}>
+                    <SelectValue placeholder="Select an exercise" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableExercises.map((exercise) => (
+                      <SelectItem key={exercise.id} value={exercise.id.toString()}>
+                        {exercise.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.exercise && (
+                  <p className="text-sm text-destructive">{errors.exercise}</p>
+                )}
+              </>
             )}
           </div>
         </div>
         
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={handleClose} className="gap-2">
+          <Button 
+            variant="outline" 
+            onClick={handleClose} 
+            className="gap-2"
+            disabled={isLoading}
+          >
             <X className="h-4 w-4" />
             Cancel
           </Button>
-          <Button onClick={handleSave} className="gap-2">
-            <Save className="h-4 w-4" />
-            Save Exercise
+          <Button 
+            onClick={handleSave} 
+            className="gap-2"
+            disabled={isLoading || isFetchingExercises || availableExercises.length === 0}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                Save Exercise
+              </>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

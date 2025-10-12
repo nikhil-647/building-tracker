@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Mail, Lock, ArrowLeft, AlertCircle } from "lucide-react";
+import { toast } from 'sonner';
 
 const LoginPage = () => {
   const { register, handleSubmit } = useForm();
@@ -31,13 +32,22 @@ const LoginPage = () => {
       
       if (result?.error) {
         setError('Invalid email or password');
+        toast.error('Login failed', {
+          description: 'Invalid email or password. Please try again.'
+        })
         console.log(result.error)
       } else if (result?.ok) {
+        toast.success('Login successful!', {
+          description: 'Welcome back! Redirecting to dashboard...'
+        })
         router.push('/dashboard')
       }
     } catch (err) {
       console.error('Sign in error:', err);
       setError('An error occurred during sign in');
+      toast.error('An error occurred', {
+        description: 'Something went wrong during sign in. Please try again.'
+      })
     }
   };
 

@@ -19,7 +19,7 @@ export interface Exercise {
 export interface WorkoutPlan {
   id: number
   muscleGroups: {
-    [key: string]: Exercise[]
+    [key: string]: GroupedExercise[]
   }
 }
 
