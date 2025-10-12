@@ -89,6 +89,8 @@ model Exercise {
 // ===========================================================
 // 5️⃣ EXERCISE PLAN - User's custom workout plan per muscle group
 // ===========================================================
+// Each row represents ONE exercise in a user's plan
+// A user can have multiple exercises per muscle group (multiple rows)
 model ExercisePlan {
   id              Int       @id @default(autoincrement())
   exerciseId      Int       @map("exercise_id")
@@ -103,7 +105,8 @@ model ExercisePlan {
   user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   workoutLogs  WorkoutLog[]
 
-  @@unique([userId, exerciseGroupId])
+  // Prevents duplicate: same user + same muscle group + same exercise
+  @@unique([userId, exerciseGroupId, exerciseId])
   @@index([userId], map: "idx_exercise_plan_user")
   @@index([exerciseId], map: "idx_exercise_plan_exercise")
   @@map("exercise_plan")
@@ -114,7 +117,7 @@ model ExercisePlan {
 // ===========================================================
 model WorkoutLog {
   id         Int      @id @default(autoincrement())
-  templateId Int      @map("template_id")
+  templateId Int      @map("template_id") // References ExercisePlan.id
   setNo      Int      @map("set_no")
   weight     Float?
   reps       Int?
