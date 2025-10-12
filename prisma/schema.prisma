@@ -43,10 +43,10 @@ model User {
 
   // Relations
   addedExercises     Exercise[]         @relation("ExerciseAddedBy")
-  exerciseTemplates  ExerciseTemplate[]
-  exerciseSets       ExerciseSet[]
-  activityTemplates  ActivityTemplate[]
-  activities         Activity[]
+  exercisePlans      ExercisePlan[]
+  workoutLogs        WorkoutLog[]
+  dailyActivityPlans DailyActivityPlan[]
+  activityLogs       ActivityLog[]
 
   @@map("users")
 }
@@ -60,7 +60,7 @@ model MuscleGroup {
 
   // Relations
   exercises         Exercise[]
-  exerciseTemplates ExerciseTemplate[]
+  exercisePlans     ExercisePlan[]
 
   @@map("muscle_group")
 }
@@ -80,16 +80,16 @@ model Exercise {
   // Relations
   muscleGroup       MuscleGroup       @relation(fields: [muscleGroupId], references: [id], onDelete: Cascade)
   user              User?             @relation("ExerciseAddedBy", fields: [addedBy], references: [id], onDelete: Cascade)
-  exerciseTemplates ExerciseTemplate[]
+  exercisePlans     ExercisePlan[]
 
   @@index([addedBy], map: "idx_exercise_user")
   @@map("exercises")
 }
 
 // ===========================================================
-// 5️⃣ EXERCISE TEMPLATE - User's custom workout plan per muscle group
+// 5️⃣ EXERCISE PLAN - User's custom workout plan per muscle group
 // ===========================================================
-model ExerciseTemplate {
+model ExercisePlan {
   id              Int       @id @default(autoincrement())
   exerciseId      Int       @map("exercise_id")
   exerciseGroupId Int       @map("exercise_group_id")
@@ -101,18 +101,18 @@ model ExerciseTemplate {
   exercise     Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
   muscleGroup  MuscleGroup    @relation(fields: [exerciseGroupId], references: [id], onDelete: Cascade)
   user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  exerciseSets ExerciseSet[]
+  workoutLogs  WorkoutLog[]
 
   @@unique([userId, exerciseGroupId])
-  @@index([userId], map: "idx_exercise_template_user")
-  @@index([exerciseId], map: "idx_exercise_template_exercise")
-  @@map("exercise_template")
+  @@index([userId], map: "idx_exercise_plan_user")
+  @@index([exerciseId], map: "idx_exercise_plan_exercise")
+  @@map("exercise_plan")
 }
 
 // ===========================================================
-// 6️⃣ EXERCISE SET - User's workout logs (weight, reps, etc.)
+// 6️⃣ WORKOUT LOG - User's workout logs (weight, reps, etc.)
 // ===========================================================
-model ExerciseSet {
+model WorkoutLog {
   id         Int      @id @default(autoincrement())
   templateId Int      @map("template_id")
   setNo      Int      @map("set_no")
@@ -124,18 +124,18 @@ model ExerciseSet {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   // Relations
-  template ExerciseTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
-  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercisePlan ExercisePlan @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([templateId, setNo, userId, date])
-  @@index([userId], map: "idx_exercise_set_user")
-  @@map("exercise_set")
+  @@index([userId], map: "idx_workout_log_user")
+  @@map("workout_log")
 }
 
 // ===========================================================
-// 7️⃣ ACTIVITY TEMPLATE - User's daily activity plan (steps, water, etc.)
+// 7️⃣ DAILY ACTIVITY PLAN - User's daily activity plan (steps, water, etc.)
 // ===========================================================
-model ActivityTemplate {
+model DailyActivityPlan {
   id         Int      @id @default(autoincrement())
   userId     Int      @map("user_id")
   date       DateTime @db.Date
@@ -144,29 +144,29 @@ model ActivityTemplate {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   // Relations
-  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  activityLogs   Activity[]
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activityLogs   ActivityLog[]
 
-  @@index([userId], map: "idx_activity_template_user")
-  @@map("activity_template")
+  @@index([userId], map: "idx_daily_activity_plan_user")
+  @@map("daily_activity_plan")
 }
 
 // ===========================================================
-// 8️⃣ ACTIVITIES - Tracking completion status of daily activities
+// 8️⃣ ACTIVITY LOG - Tracking completion status of daily activities
 // ===========================================================
-model Activity {
-  id                 Int                @id @default(autoincrement())
-  activityTemplateId Int                @map("activity_template_id")
-  userId             Int                @map("user_id")
-  status             ActivityStatusEnum @default(pending)
-  createdAt          DateTime           @default(now()) @map("created_at")
-  updatedAt          DateTime           @updatedAt @map("updated_at")
+model ActivityLog {
+  id                   Int                @id @default(autoincrement())
+  dailyActivityPlanId  Int                @map("daily_activity_plan_id")
+  userId               Int                @map("user_id")
+  status               ActivityStatusEnum @default(pending)
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
 
   // Relations
-  activityTemplate ActivityTemplate @relation(fields: [activityTemplateId], references: [id], onDelete: Cascade)
-  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyActivityPlan DailyActivityPlan @relation(fields: [dailyActivityPlanId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId], map: "idx_activities_user")
-  @@map("activities")
+  @@index([userId], map: "idx_activity_log_user")
+  @@map("activity_log")
 }
 
