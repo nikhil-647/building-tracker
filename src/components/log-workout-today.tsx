@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,8 +10,7 @@ import {
   Trash2, 
   Calendar,
   Clock,
-  Check,
-  X
+  Loader2
 } from 'lucide-react'
 import { getMuscleGroupIcon, GymIcon, gymIcons } from '@/lib/gym-icons'
 import type { 
@@ -38,6 +37,17 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
     muscleGroups: [],
     exercises: []
   })
+  
+  // Auto-save state
+  const [savingSetIds, setSavingSetIds] = useState<Set<string>>(new Set())
+  const debounceTimers = useRef<Map<string, NodeJS.Timeout>>(new Map())
+  
+  // Simulated API call for saving a set
+  const saveSetToAPI = async (setData: ExerciseSet) => {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 800))
+    console.log('Saved set to API:', setData)
+  }
 
   const startWorkout = () => {
     setIsWorkoutActive(true)
@@ -52,11 +62,15 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
     setSelectedMuscleGroups(prev => {
       // If clicking the same muscle group, deselect it
       if (prev.includes(muscleGroup)) {
+        setSelectedExercise(null)
         return []
       }
       
       // Otherwise, select only this muscle group (single selection)
       const newSelection = [muscleGroup]
+      
+      // Clear selected exercise when switching muscle groups
+      setSelectedExercise(null)
       
       // Smooth scroll to Add Exercises section when muscle group is selected
       setTimeout(() => {
@@ -71,29 +85,12 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
   }
 
   const selectExercise = (exercise: Exercise, muscleGroup: string) => {
-    // Set the selected exercise
+    // Set the selected exercise (don't auto-add a set)
     setSelectedExercise({
       id: exercise.id,
       name: exercise.name,
       muscleGroup
     })
-
-    // Add the first set for this exercise
-    const newSet: ExerciseSet = {
-      id: `set-${Date.now()}-${Math.random()}`,
-      exerciseId: exercise.id,
-      exerciseName: exercise.name,
-      muscleGroup,
-      setNo: 1,
-      weight: null,
-      reps: null,
-      completed: false
-    }
-
-    setCurrentWorkoutSession(prev => ({
-      ...prev,
-      exercises: [...prev.exercises, newSet]
-    }))
 
     // Smooth scroll to the Log Your Sets section after selecting exercise
     setTimeout(() => {
@@ -105,13 +102,55 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
   }
 
   const updateExerciseSet = (setId: string, updates: Partial<ExerciseSet>) => {
-    setCurrentWorkoutSession(prev => ({
-      ...prev,
-      exercises: prev.exercises.map(exercise => 
-        exercise.id === setId ? { ...exercise, ...updates } : exercise
-      )
-    }))
+    // Update local state immediately and capture the updated set
+    let updatedSet: ExerciseSet | null = null
+    
+    setCurrentWorkoutSession(prev => {
+      const newExercises = prev.exercises.map(exercise => {
+        if (exercise.id === setId) {
+          updatedSet = { ...exercise, ...updates }
+          return updatedSet
+        }
+        return exercise
+      })
+      
+      return {
+        ...prev,
+        exercises: newExercises
+      }
+    })
+    
+    // Debounced auto-save
+    const existingTimer = debounceTimers.current.get(setId)
+    if (existingTimer) {
+      clearTimeout(existingTimer)
+    }
+    
+    // Set saving state
+    setSavingSetIds(prev => new Set(prev).add(setId))
+    
+    // Create new debounced save with the captured updated set
+    const timer = setTimeout(async () => {
+      if (updatedSet) {
+        await saveSetToAPI(updatedSet)
+        setSavingSetIds(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(setId)
+          return newSet
+        })
+      }
+      debounceTimers.current.delete(setId)
+    }, 1000) // 1 second debounce
+    
+    debounceTimers.current.set(setId, timer)
   }
+  
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      debounceTimers.current.forEach(timer => clearTimeout(timer))
+    }
+  }, [])
 
   const addNewSet = () => {
     if (!selectedExercise) return
@@ -273,60 +312,74 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
                       <div className="space-y-4">
                         {currentWorkoutSession.exercises
                           .filter(ex => ex.exerciseId === selectedExercise.id && ex.muscleGroup === selectedExercise.muscleGroup)
-                          .map((set) => (
-                            <div key={set.id} className="p-4 border rounded-lg bg-card">
-                              <div className="flex items-center justify-between mb-3">
-                                <span className="text-sm font-medium text-muted-foreground">Set {set.setNo}</span>
-                                <div className="flex items-center gap-2">
-                                  <Button
-                                    variant={set.completed ? "default" : "outline"}
-                                    size="sm"
-                                    onClick={() => updateExerciseSet(set.id, { completed: !set.completed })}
-                                  >
-                                    {set.completed ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => removeSet(set.id)}
-                                    className="text-destructive hover:text-destructive"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
+                          .length > 0 ? (
+                          <>
+                            {currentWorkoutSession.exercises
+                              .filter(ex => ex.exerciseId === selectedExercise.id && ex.muscleGroup === selectedExercise.muscleGroup)
+                              .map((set) => (
+                                <div 
+                                  key={set.id} 
+                                  className="p-4 border rounded-lg transition-all bg-card"
+                                >
+                                  <div className="flex items-center justify-between mb-3">
+                                    <span className="text-sm font-medium text-muted-foreground">
+                                      Set {set.setNo}
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      {savingSetIds.has(set.id) && (
+                                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                          <span>Saving...</span>
+                                        </div>
+                                      )}
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => removeSet(set.id)}
+                                        className="text-destructive hover:text-destructive"
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                      <Label htmlFor={`weight-${set.id}`} className="text-sm font-medium">Weight (lbs)</Label>
+                                      <Input
+                                        id={`weight-${set.id}`}
+                                        type="number"
+                                        placeholder="0"
+                                        value={set.weight || ''}
+                                        onChange={(e) => updateExerciseSet(set.id, { 
+                                          weight: e.target.value ? parseFloat(e.target.value) : null 
+                                        })}
+                                        className="w-full"
+                                      />
+                                    </div>
+                                    
+                                    <div className="space-y-2">
+                                      <Label htmlFor={`reps-${set.id}`} className="text-sm font-medium">Reps</Label>
+                                      <Input
+                                        id={`reps-${set.id}`}
+                                        type="number"
+                                        placeholder="0"
+                                        value={set.reps || ''}
+                                        onChange={(e) => updateExerciseSet(set.id, { 
+                                          reps: e.target.value ? parseInt(e.target.value) : null 
+                                        })}
+                                        className="w-full"
+                                      />
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                              
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <Label htmlFor={`weight-${set.id}`} className="text-sm font-medium">Weight (lbs)</Label>
-                                  <Input
-                                    id={`weight-${set.id}`}
-                                    type="number"
-                                    placeholder="0"
-                                    value={set.weight || ''}
-                                    onChange={(e) => updateExerciseSet(set.id, { 
-                                      weight: e.target.value ? parseFloat(e.target.value) : null 
-                                    })}
-                                    className="w-full"
-                                  />
-                                </div>
-                                
-                                <div className="space-y-2">
-                                  <Label htmlFor={`reps-${set.id}`} className="text-sm font-medium">Reps</Label>
-                                  <Input
-                                    id={`reps-${set.id}`}
-                                    type="number"
-                                    placeholder="0"
-                                    value={set.reps || ''}
-                                    onChange={(e) => updateExerciseSet(set.id, { 
-                                      reps: e.target.value ? parseInt(e.target.value) : null 
-                                    })}
-                                    className="w-full"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          ))}
+                              ))}
+                          </>
+                        ) : (
+                          <div className="text-center py-6 text-muted-foreground">
+                            <p className="text-sm">Click &quot;+ Add Set&quot; to start logging sets for this exercise</p>
+                          </div>
+                        )}
                         
                         <Button
                           variant="outline"
