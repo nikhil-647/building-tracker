@@ -13,6 +13,8 @@ import {
   Loader2
 } from 'lucide-react'
 import { getMuscleGroupIcon, GymIcon, gymIcons } from '@/lib/gym-icons'
+import { saveWorkoutSet, deleteWorkoutSet, getWorkoutLogsByDate } from '@/app/api/workout-log/actions'
+import { toast } from 'sonner'
 import type { 
   MuscleGroup, 
   Exercise, 
@@ -29,6 +31,7 @@ interface LogWorkoutTodayProps {
 export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayProps) {
   // Workout logging state
   const [isWorkoutActive, setIsWorkoutActive] = useState(false)
+  const [isLoadingWorkout, setIsLoadingWorkout] = useState(false)
   const [selectedMuscleGroups, setSelectedMuscleGroups] = useState<string[]>([])
   const [selectedExercise, setSelectedExercise] = useState<{id: number, name: string, muscleGroup: string} | null>(null)
   const [currentWorkoutSession, setCurrentWorkoutSession] = useState<WorkoutSession>({
@@ -42,20 +45,38 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
   const [savingSetIds, setSavingSetIds] = useState<Set<string>>(new Set())
   const debounceTimers = useRef<Map<string, NodeJS.Timeout>>(new Map())
   
-  // Simulated API call for saving a set
+  // API call for saving a set
   const saveSetToAPI = async (setData: ExerciseSet) => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800))
-    console.log('Saved set to API:', setData)
+    try {
+      const result = await saveWorkoutSet(
+        setData.exerciseId,
+        setData.muscleGroup,
+        setData.setNo,
+        setData.weight,
+        setData.reps,
+        currentWorkoutSession.date
+      )
+      
+      if (!result.success) {
+        toast.error(result.error || 'Failed to save workout set')
+        console.error('Error saving set:', result.error)
+      }
+    } catch (error) {
+      console.error('Error saving set to API:', error)
+      toast.error('Failed to save workout set')
+    }
   }
 
   const startWorkout = () => {
-    setIsWorkoutActive(true)
-    setCurrentWorkoutSession(prev => ({
-      ...prev,
+    // Simple start for fresh workout (initial load is handled by useEffect)
+    const todayDate = new Date().toISOString().split('T')[0]
+    setCurrentWorkoutSession({
       id: `workout-${Date.now()}`,
-      date: new Date().toISOString().split('T')[0]
-    }))
+      date: todayDate,
+      muscleGroups: [],
+      exercises: []
+    })
+    setIsWorkoutActive(true)
   }
 
   const toggleMuscleGroupSelection = (muscleGroup: string) => {
@@ -145,6 +166,35 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
     debounceTimers.current.set(setId, timer)
   }
   
+  // Load existing workouts on mount
+  useEffect(() => {
+    const loadExistingWorkouts = async () => {
+      setIsLoadingWorkout(true)
+      const todayDate = new Date().toISOString().split('T')[0]
+      
+      try {
+        const result = await getWorkoutLogsByDate(todayDate)
+        
+        if (result.success && result.data.length > 0) {
+          // Auto-activate workout and load existing data
+          setCurrentWorkoutSession({
+            id: `workout-${Date.now()}`,
+            date: todayDate,
+            muscleGroups: [],
+            exercises: result.data
+          })
+          setIsWorkoutActive(true)
+        }
+      } catch (error) {
+        console.error('Error loading existing workouts:', error)
+      } finally {
+        setIsLoadingWorkout(false)
+      }
+    }
+    
+    loadExistingWorkouts()
+  }, [])
+  
   // Cleanup timers on unmount
   useEffect(() => {
     return () => {
@@ -185,11 +235,44 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
     }, 100)
   }
 
-  const removeSet = (setId: string) => {
+  const removeSet = async (setId: string) => {
+    // Find the set to be removed
+    const setToRemove = currentWorkoutSession.exercises.find(ex => ex.id === setId)
+    
+    if (!setToRemove) return
+    
+    // Optimistically remove from UI first
     setCurrentWorkoutSession(prev => ({
       ...prev,
       exercises: prev.exercises.filter(ex => ex.id !== setId)
     }))
+    
+    // Call API to delete from database
+    try {
+      const result = await deleteWorkoutSet(
+        setToRemove.exerciseId,
+        setToRemove.muscleGroup,
+        setToRemove.setNo,
+        currentWorkoutSession.date
+      )
+      
+      if (!result.success) {
+        toast.error(result.error || 'Failed to delete workout set')
+        // Restore the set if deletion failed
+        setCurrentWorkoutSession(prev => ({
+          ...prev,
+          exercises: [...prev.exercises, setToRemove].sort((a, b) => a.setNo - b.setNo)
+        }))
+      }
+    } catch (error) {
+      console.error('Error deleting set:', error)
+      toast.error('Failed to delete workout set')
+      // Restore the set if deletion failed
+      setCurrentWorkoutSession(prev => ({
+        ...prev,
+        exercises: [...prev.exercises, setToRemove].sort((a, b) => a.setNo - b.setNo)
+      }))
+    }
   }
 
   return (
@@ -201,7 +284,12 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {!isWorkoutActive ? (
+        {isLoadingWorkout && !isWorkoutActive ? (
+          <div className="text-center py-12">
+            <Loader2 className="h-12 w-12 mx-auto mb-4 animate-spin text-primary" />
+            <p className="text-muted-foreground">Loading workout data...</p>
+          </div>
+        ) : !isWorkoutActive ? (
           <div className="space-y-4">
             <div className="text-center py-8 text-muted-foreground">
               <Clock className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -209,7 +297,12 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
               <p className="text-sm">Start your workout to begin logging exercises</p>
             </div>
             <div className="flex justify-center">
-              <Button size="lg" className="gap-2" onClick={startWorkout}>
+              <Button 
+                size="lg" 
+                className="gap-2" 
+                onClick={startWorkout}
+                disabled={isLoadingWorkout}
+              >
                 <GymIcon icon={gymIcons.workout} className="h-5 w-5" />
                 Start Today&apos;s Workout
               </Button>
