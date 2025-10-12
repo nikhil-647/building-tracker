@@ -38,29 +38,29 @@ export function AddExerciseModal({ isOpen, onClose, onSave, selectedMuscleGroup 
 
   // Fetch available exercises when modal opens or muscle group changes
   React.useEffect(() => {
+    const fetchExercises = async () => {
+      setIsFetchingExercises(true)
+      setErrors({})
+      
+      try {
+        const result = await getAvailableExercises(selectedMuscleGroup)
+        
+        if (result.success) {
+          setAvailableExercises(result.data)
+        } else {
+          setErrors({ general: result.error || 'Failed to load exercises' })
+        }
+      } catch {
+        setErrors({ general: 'Failed to load exercises' })
+      } finally {
+        setIsFetchingExercises(false)
+      }
+    }
+
     if (isOpen && selectedMuscleGroup) {
-      fetchAvailableExercises()
+      fetchExercises()
     }
   }, [isOpen, selectedMuscleGroup])
-
-  const fetchAvailableExercises = async () => {
-    setIsFetchingExercises(true)
-    setErrors({})
-    
-    try {
-      const result = await getAvailableExercises(selectedMuscleGroup)
-      
-      if (result.success) {
-        setAvailableExercises(result.data)
-      } else {
-        setErrors({ general: result.error || 'Failed to load exercises' })
-      }
-    } catch (error) {
-      setErrors({ general: 'Failed to load exercises' })
-    } finally {
-      setIsFetchingExercises(false)
-    }
-  }
 
   const handleSave = async () => {
     const newErrors: { exercise?: string; general?: string } = {}
@@ -92,7 +92,7 @@ export function AddExerciseModal({ isOpen, onClose, onSave, selectedMuscleGroup 
         })
         setErrors({ general: result.error || 'Failed to add exercise' })
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred', {
         description: 'Please try again later.'
       })

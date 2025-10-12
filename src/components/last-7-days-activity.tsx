@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, TrendingUp, Calendar, Dumbbell, Activity } from 'lucide-react'
+import { Plus, Calendar, Dumbbell, Activity } from 'lucide-react'
 
 interface ActivityData {
   date: string
@@ -68,7 +68,7 @@ export function ActivityProgress() {
         <div className="space-y-4">
           <h4 className="font-medium text-lg">Daily Breakdown</h4>
           <div className="space-y-2">
-            {mockActivityData.map((day, index) => (
+            {mockActivityData.map((day) => (
               <div key={day.date} className="bg-gradient-to-r from-muted/30 to-muted/10 p-4 rounded-xl border border-border/50 hover:border-border transition-all duration-200">
                 <div className="flex items-center justify-between">
                   {/* Date Section */}
@@ -129,7 +129,7 @@ export function ActivityProgress() {
             <div className="bg-primary h-2 rounded-full transition-all duration-300" style={{ width: '75%' }} />
           </div>
           <p className="text-xs text-muted-foreground">
-            You're on track! Keep up the great work.
+            You&apos;re on track! Keep up the great work.
           </p>
         </div>
       </CardContent>

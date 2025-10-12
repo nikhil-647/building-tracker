@@ -172,7 +172,7 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
             <div className="flex justify-center">
               <Button size="lg" className="gap-2" onClick={startWorkout}>
                 <Dumbbell className="h-5 w-5" />
-                Start Today's Workout
+                Start Today&apos;s Workout
               </Button>
             </div>
           </div>

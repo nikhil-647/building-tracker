@@ -69,11 +69,11 @@ export async function addExerciseToUserPlan(exerciseId: number, muscleGroupName:
         muscleGroupName: exercisePlan.muscleGroup.name
       }
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error adding exercise to plan:', error)
     
     // Handle unique constraint violation
-    if (error.code === 'P2002') {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return { success: false, error: 'This exercise is already in your plan for this muscle group' }
     }
     

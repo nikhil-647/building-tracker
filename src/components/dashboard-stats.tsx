@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { TrendingUp, Dumbbell, Activity, Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { Dumbbell, Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface StatCardProps {

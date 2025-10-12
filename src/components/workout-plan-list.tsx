@@ -41,7 +41,7 @@ export function WorkoutPlanList({ muscleGroups, userExercisePlan }: WorkoutPlanL
                       <div className="text-center py-8 text-muted-foreground">
                         <Dumbbell className="h-12 w-12 mx-auto mb-3 opacity-50" />
                         <p>No exercises added yet</p>
-                        <p className="text-sm">Click "Add Exercise" to get started</p>
+                        <p className="text-sm">Click &quot;Add Exercise&quot; to get started</p>
                       </div>
                     ) : (
                       exercises.map((exercise) => (

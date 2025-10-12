@@ -41,7 +41,7 @@ export function DeleteExerciseButton({ planId, exerciseName, muscleGroup }: Dele
           description: result.error || 'An error occurred while deleting the exercise.'
         })
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred', {
         description: 'Please try again later.'
       })
