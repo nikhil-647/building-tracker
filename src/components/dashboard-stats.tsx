@@ -1,6 +1,7 @@
 import * as React from 'react'
-import { Dumbbell, Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { GymIcon, gymIcons } from '@/lib/gym-icons'
 
 interface StatCardProps {
   title: string
@@ -43,7 +44,7 @@ export function DashboardStats() {
         value="24"
         change="+3"
         changeType="increase"
-        icon={<Dumbbell className="h-4 w-4 text-muted-foreground" />}
+        icon={<GymIcon icon={gymIcons.fitness} className="h-4 w-4 text-muted-foreground" />}
       />
       <StatCard
         title="Activities Logged"

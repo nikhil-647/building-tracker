@@ -1,7 +1,8 @@
-import { Activity, TrendingUp, Target, Calendar, Dumbbell, Heart } from "lucide-react";
+import { Activity, TrendingUp, Target, Calendar, Heart } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { GymIcon, gymIcons } from "@/lib/gym-icons";
 
 export default function Home() {
   return (
@@ -43,7 +44,7 @@ export default function Home() {
           <Card className="group hover:shadow-xl transition-all hover:border-blue-200 hover:-translate-y-1">
             <CardHeader>
               <div className="bg-gradient-to-br from-blue-500 to-blue-600 w-12 h-12 rounded-xl flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Dumbbell className="w-6 h-6 text-white" />
+                <GymIcon icon={gymIcons.strength} className="w-6 h-6 text-white" />
               </div>
               <CardTitle className="text-xl">Exercise Tracking</CardTitle>
               <CardDescription className="text-base">

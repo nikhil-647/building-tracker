@@ -2,9 +2,10 @@
 
 import * as React from 'react'
 import { signOut } from 'next-auth/react'
-import { Menu, X, Building2, User, Settings, LogOut, Dumbbell, Activity } from 'lucide-react'
+import { Menu, X, Building2, User, Settings, LogOut, Activity } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { GymIcon, gymIcons } from '@/lib/gym-icons'
 
 interface NavbarProps {
   user?: {
@@ -57,7 +58,7 @@ export function Navbar({ user }: NavbarProps) {
                   Dashboard
                 </Button>
                 <Button variant="ghost" size="sm">
-                  <Dumbbell className="h-4 w-4 mr-2" />
+                  <GymIcon icon={gymIcons.workout} className="h-4 w-4 mr-2" />
                   Log Workout
                 </Button>
                 <Button variant="ghost" size="sm">
@@ -122,13 +123,13 @@ export function Navbar({ user }: NavbarProps) {
           {/* Mobile Navigation Menu */}
           <div className="fixed top-16 left-0 right-0 z-50 md:hidden">
             <Card className="m-4 p-4 space-y-2 shadow-lg">
-              <Button variant="ghost" className="w-full justify-start">
-                Dashboard
-              </Button>
-              <Button variant="ghost" className="w-full justify-start">
-                <Dumbbell className="h-4 w-4 mr-2" />
-                Log Workout
-              </Button>
+                <Button variant="ghost" className="w-full justify-start">
+                  Dashboard
+                </Button>
+                <Button variant="ghost" className="w-full justify-start">
+                  <GymIcon icon={gymIcons.workout} className="h-4 w-4 mr-2" />
+                  Log Workout
+                </Button>
               <Button variant="ghost" className="w-full justify-start">
                 <Activity className="h-4 w-4 mr-2" />
                 Log Activity

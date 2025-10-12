@@ -18,9 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Dumbbell, Save, X, Loader2 } from 'lucide-react'
+import { Save, X, Loader2 } from 'lucide-react'
 import { getAvailableExercises, addExerciseToUserPlan } from '@/app/api/workout-plan/actions'
 import { toast } from 'sonner'
+import { GymIcon, gymIcons } from '@/lib/gym-icons'
 
 interface AddExerciseModalProps {
   isOpen: boolean
@@ -113,7 +114,7 @@ export function AddExerciseModal({ isOpen, onClose, onSave, selectedMuscleGroup 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Dumbbell className="h-5 w-5" />
+            <GymIcon icon={gymIcons.dumbbell} className="h-5 w-5" />
             Add New Exercise
           </DialogTitle>
           <DialogDescription>

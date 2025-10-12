@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, Calendar, Dumbbell, Activity } from 'lucide-react'
+import { Plus, Calendar, Activity } from 'lucide-react'
+import { GymIcon, gymIcons } from '@/lib/gym-icons'
 
 interface ActivityData {
   date: string
@@ -86,7 +87,7 @@ export function ActivityProgress() {
                 {/* Activity Counts */}
                 <div className="flex justify-center space-x-6 mb-3">
                   <div className="flex items-center space-x-2 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-2 rounded-full">
-                    <Dumbbell className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    <GymIcon icon={gymIcons.fitness} className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                     <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">{day.workouts}</span>
                     <span className="text-xs text-emerald-600 dark:text-emerald-400">workouts</span>
                   </div>
