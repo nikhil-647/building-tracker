@@ -33,8 +33,6 @@ const LoginPage = () => {
         redirect: false,
       });
       
-      console.log('result after sign in', result)
-      
       if (result?.error) {
         setError('Invalid email or password');
         toast.error('Login failed', {

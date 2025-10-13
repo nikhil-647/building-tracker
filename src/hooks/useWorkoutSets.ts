@@ -51,8 +51,7 @@ export function useWorkoutSets({
 
   const updateExerciseSet = useCallback((setId: string, updates: Partial<ExerciseSet>) => {
     // Update local state immediately and capture the updated set
-    let updatedSet: ExerciseSet | null = null
-    
+    let updatedSet: ExerciseSet | null = null;
     setCurrentWorkoutSession(prev => {
       const newExercises = prev.exercises.map(exercise => {
         if (exercise.id === setId) {
@@ -68,7 +67,7 @@ export function useWorkoutSets({
       }
     })
     
-    // Debounced auto-save
+    // Debounced auto-save.
     const existingTimer = debounceTimers.current.get(setId)
     if (existingTimer) {
       clearTimeout(existingTimer)
@@ -89,8 +88,8 @@ export function useWorkoutSets({
       }
       debounceTimers.current.delete(setId)
     }, 1000) // 1 second debounce
-    
-    debounceTimers.current.set(setId, timer)
+    debounceTimers.current.set(setId, timer);
+
   }, [saveSetToAPI, setCurrentWorkoutSession])
 
   const addNewSet = useCallback(() => {

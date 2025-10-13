@@ -20,14 +20,12 @@ export function useWorkoutSession() {
     const loadExistingWorkouts = async () => {
       setIsLoadingWorkout(true)
       const todayDate = new Date().toISOString().split('T')[0]
-      
       try {
         const result = await getWorkoutLogsByDate(todayDate)
-        
         if (result.success && result.data.length > 0) {
           // Auto-activate workout and load existing data
           setCurrentWorkoutSession({
-            id: `workout-${Date.now()}`,
+            id: crypto.randomUUID(),
             date: todayDate,
             muscleGroups: [],
             exercises: result.data
@@ -47,7 +45,7 @@ export function useWorkoutSession() {
   const startWorkout = () => {
     const todayDate = new Date().toISOString().split('T')[0]
     setCurrentWorkoutSession({
-      id: `workout-${Date.now()}`,
+      id: crypto.randomUUID(),
       date: todayDate,
       muscleGroups: [],
       exercises: []
