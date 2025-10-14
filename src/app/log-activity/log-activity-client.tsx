@@ -59,12 +59,14 @@ export function LogActivityClient({
         </div>
       </div>
 
-      {/* Daily Activity Progress - Separate Component */}
-      <DailyActivityProgress
-        completedActivities={completedActivities}
-        totalActivities={totalActivities}
-        overallProgress={overallProgress}
-      />
+      {/* Daily Activity Progress - Sticky/Floating Component */}
+      <div className="sticky top-16 z-10 bg-background pb-2">
+        <DailyActivityProgress
+          completedActivities={completedActivities}
+          totalActivities={totalActivities}
+          overallProgress={overallProgress}
+        />
+      </div>
 
       {/* Activity Selector - Separate Component with its own state */}
       <ActivitySelector 
