@@ -1,8 +1,7 @@
-import { Activity, TrendingUp, Target, Calendar, Heart, Dumbbell, Zap, BarChart3, CheckCircle2, ArrowRight, Sparkles, Trophy, Flame } from "lucide-react";
+import { Activity, Heart, Dumbbell, Zap, BarChart3, CheckCircle2, ArrowRight, Sparkles, Trophy, Flame } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GymIcon, gymIcons } from "@/lib/gym-icons";
 
 export default function Home() {
   return (
@@ -181,7 +180,7 @@ export default function Home() {
           <div className="flex justify-center">
             <Link href="/signup">
               <Button size="lg" className="px-12 py-7 text-xl font-bold bg-white text-green-600 hover:bg-slate-100 shadow-xl hover:scale-110 transition-all duration-300">
-                Get Started Now - It's Free!
+                Get Started Now - It&apos;s Free!
               </Button>
             </Link>
           </div>
