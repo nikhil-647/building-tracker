@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { DailyActivityProgress } from '@/components/daily-activity-progress'
 import { ActivitySelector } from '@/components/activity-selector'
 import { ActivityTracker } from '@/components/activity-tracker'
 import type { ActivityTemplate, ActivityProgress } from '@/types/activity'
+import { useActivityManagement } from '@/hooks/useActivityManagement'
 
 interface LogActivityClientProps {
   activityTemplates: ActivityTemplate[]
@@ -15,30 +16,15 @@ export function LogActivityClient({
   activityTemplates: initialTemplates, 
   todayProgress: initialProgress 
 }: LogActivityClientProps) {
-  const [templates, setTemplates] = useState<ActivityTemplate[]>(initialTemplates)
-  const [progress, setProgress] = useState<ActivityProgress[]>(initialProgress)
-
-  const toggleActivityComplete = (activityId: string) => {
-    setProgress(prev => {
-      const existing = prev.find(p => p.activityId === activityId)
-      
-      if (existing) {
-        return prev.map(p => 
-          p.activityId === activityId 
-            ? { 
-                ...p, 
-                completed: !p.completed
-              }
-            : p
-        )
-      } else {
-        return [...prev, {
-          activityId,
-          completed: true
-        }]
-      }
-    })
-  }
+  const {
+    templates,
+    progress,
+    isPending,
+    handleToggleComplete,
+    handleAddTemplate,
+    handleUpdateTemplate,
+    handleDeleteTemplate
+  } = useActivityManagement(initialTemplates, initialProgress)
 
   const totalActivities = templates.length
   const completedActivities = templates.filter(t => {
@@ -71,14 +57,18 @@ export function LogActivityClient({
       {/* Activity Selector - Separate Component with its own state */}
       <ActivitySelector 
         templates={templates}
-        onTemplatesChange={setTemplates}
+        onAddTemplate={handleAddTemplate}
+        onUpdateTemplate={handleUpdateTemplate}
+        onDeleteTemplate={handleDeleteTemplate}
+        isPending={isPending}
       />
 
       {/* Activity Tracker - Separate Component with its own state */}
       <ActivityTracker
         selectedActivities={templates}
         progress={progress}
-        onToggleComplete={toggleActivityComplete}
+        onToggleComplete={handleToggleComplete}
+        isPending={isPending}
       />
     </main>
   )

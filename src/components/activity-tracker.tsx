@@ -10,9 +10,10 @@ interface ActivityTrackerProps {
   selectedActivities: ActivityTemplate[]
   progress: ActivityProgress[]
   onToggleComplete: (activityId: string) => void
+  isPending?: boolean
 }
 
-export function ActivityTracker({ selectedActivities, progress, onToggleComplete }: ActivityTrackerProps) {
+export function ActivityTracker({ selectedActivities, progress, onToggleComplete, isPending }: ActivityTrackerProps) {
   if (selectedActivities.length === 0) {
     return (
       <Card>
@@ -54,12 +55,14 @@ export function ActivityTracker({ selectedActivities, progress, onToggleComplete
               <button
                 key={activity.id}
                 onClick={() => onToggleComplete(activity.id)}
+                disabled={isPending}
                 className={`
                   w-full p-4 rounded-lg border-2 transition-all text-left
                   ${isCompleted 
                     ? 'border-primary bg-primary/5 hover:bg-primary/10' 
                     : 'border-border hover:border-primary/50 bg-card hover:bg-accent/50'
                   }
+                  ${isPending ? 'opacity-50 cursor-not-allowed' : ''}
                 `}
               >
                 <div className="flex items-center gap-3">
