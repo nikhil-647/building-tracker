@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Link from 'next/link'
 import { signOut } from 'next-auth/react'
 import { Menu, X, Building2, User, Settings, LogOut, Activity } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -54,17 +55,23 @@ export function Navbar({ user }: NavbarProps) {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
               <div className="flex items-center space-x-4">
-                <Button variant="ghost" size="sm">
-                  Dashboard
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <GymIcon icon={gymIcons.workout} className="h-4 w-4 mr-2" />
-                  Log Workout
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <Activity className="h-4 w-4 mr-2" />
-                  Log Activity
-                </Button>
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Link href="/log-workout">
+                  <Button variant="ghost" size="sm">
+                    <GymIcon icon={gymIcons.workout} className="h-4 w-4 mr-2" />
+                    Log Workout
+                  </Button>
+                </Link>
+                <Link href="/log-activity">
+                  <Button variant="ghost" size="sm">
+                    <Activity className="h-4 w-4 mr-2" />
+                    Log Activity
+                  </Button>
+                </Link>
               </div>
               
               <div className="flex items-center space-x-2">
@@ -123,17 +130,23 @@ export function Navbar({ user }: NavbarProps) {
           {/* Mobile Navigation Menu */}
           <div className="fixed top-16 left-0 right-0 z-50 md:hidden">
             <Card className="m-4 p-4 space-y-2 shadow-lg">
+              <Link href="/dashboard" onClick={toggleMobileMenu}>
                 <Button variant="ghost" className="w-full justify-start">
                   Dashboard
                 </Button>
+              </Link>
+              <Link href="/log-workout" onClick={toggleMobileMenu}>
                 <Button variant="ghost" className="w-full justify-start">
                   <GymIcon icon={gymIcons.workout} className="h-4 w-4 mr-2" />
                   Log Workout
                 </Button>
-              <Button variant="ghost" className="w-full justify-start">
-                <Activity className="h-4 w-4 mr-2" />
-                Log Activity
-              </Button>
+              </Link>
+              <Link href="/log-activity" onClick={toggleMobileMenu}>
+                <Button variant="ghost" className="w-full justify-start">
+                  <Activity className="h-4 w-4 mr-2" />
+                  Log Activity
+                </Button>
+              </Link>
               {user && (
                 <>
                   <hr className="my-2" />
