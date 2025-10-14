@@ -22,8 +22,9 @@ export function useWorkoutSets({
 
   // Cleanup timers on unmount
   useEffect(() => {
+    const timers = debounceTimers.current
     return () => {
-      debounceTimers.current.forEach(timer => clearTimeout(timer))
+      timers.forEach(timer => clearTimeout(timer))
     }
   }, [])
 

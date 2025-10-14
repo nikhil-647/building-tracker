@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AddExerciseButton } from '@/components/add-exercise-button'
 import { DeleteExerciseButton } from '@/components/delete-exercise-button'
-import { getMuscleGroupIcon, GymIcon, gymIcons } from '@/lib/gym-icons'
+import { getMuscleGroupIcon, GymIcon } from '@/lib/gym-icons'
 import type { MuscleGroup, GroupedExercise } from '@/types/workout'
 
 interface WorkoutPlanListProps {

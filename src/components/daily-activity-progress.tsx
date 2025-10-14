@@ -29,7 +29,7 @@ export function DailyActivityProgress({
           <div>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
-              Today's Progress
+              Today&apos;s Progress
             </CardTitle>
             <CardDescription className="mt-2">{todayDate}</CardDescription>
           </div>

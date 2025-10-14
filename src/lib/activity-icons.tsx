@@ -7,7 +7,7 @@ import {
   Clock, Timer, CheckCircle, Star, Flag,
   Music, Headphones, Gamepad2, Tv, Monitor, Laptop,
   Pill, Stethoscope, Thermometer, Syringe, CircleDot,
-  Brush, Palette, Camera, Image, Film, Video,
+  Brush, Palette, Camera, Image as ImageIcon, Film, Video,
   ShoppingCart, DollarSign, Wallet, CreditCard,
   Users, User, Baby, Dog, Cat, Home, Car
 } from 'lucide-react'
@@ -71,7 +71,7 @@ export function getActivityIcon(icon: string) {
     'monitor': <Monitor className="h-5 w-5" />,
     'laptop': <Laptop className="h-5 w-5" />,
     'camera': <Camera className="h-5 w-5" />,
-    'image': <Image className="h-5 w-5" />,
+    'image': <ImageIcon className="h-5 w-5" />,
     'brush': <Brush className="h-5 w-5" />,
     'palette': <Palette className="h-5 w-5" />,
     'film': <Film className="h-5 w-5" />,
