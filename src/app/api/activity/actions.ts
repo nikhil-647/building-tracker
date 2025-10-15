@@ -30,8 +30,10 @@ export async function toggleActivityComplete(
       return { success: false, error: 'User not found' }
     }
 
-    // Convert date string to Date object
-    const activityDate = new Date(date)
+    // Convert date string (YYYY-MM-DD) to Date object in local timezone
+    const [year, month, day] = date.split('-').map(Number)
+    const activityDate = new Date(year, month - 1, day)
+    activityDate.setHours(0, 0, 0, 0)
 
     // Upsert the daily activity (update if exists, create if not)
     const dailyActivity = await db.dailyActivity.upsert({
@@ -238,8 +240,10 @@ export async function getActivityData(date: string) {
       return { success: false, error: 'User not found', data: null }
     }
 
-    // Convert date string to Date object
-    const activityDate = new Date(date)
+    // Convert date string (YYYY-MM-DD) to Date object in local timezone
+    const [year, month, day] = date.split('-').map(Number)
+    const activityDate = new Date(year, month - 1, day)
+    activityDate.setHours(0, 0, 0, 0)
 
     // Fetch all active activity templates for this user
     const templates = await db.activityTemplate.findMany({

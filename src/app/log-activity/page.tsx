@@ -26,7 +26,11 @@ export default async function LogActivity() {
 
   // Get today's date (start of day in local timezone)
   const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const year = today.getFullYear()
+  const month = today.getMonth()
+  const day = today.getDate()
+  const todayDate = new Date(year, month, day)
+  todayDate.setHours(0, 0, 0, 0)
 
   // Fetch all active activity templates for this user
   const activityTemplates = await db.activityTemplate.findMany({
@@ -43,7 +47,7 @@ export default async function LogActivity() {
   const todayProgress = await db.dailyActivity.findMany({
     where: {
       userId: user.id,
-      date: today
+      date: todayDate
     }
   })
 
