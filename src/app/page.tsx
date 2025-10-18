@@ -2,8 +2,11 @@ import { Activity, Heart, Dumbbell, Zap, BarChart3, CheckCircle2, ArrowRight, Sp
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { redirectIfAuthenticated } from "@/lib/auth-helpers";
 
-export default function Home() {
+export default async function Home() {
+  // Redirect logged-in users to dashboard
+  await redirectIfAuthenticated();
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 overflow-hidden">
       {/* Animated Background Elements */}

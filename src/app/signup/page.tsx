@@ -11,6 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Activity, Mail, Lock, User, ArrowLeft, AlertCircle, Sparkles } from "lucide-react";
 import { signup } from "./actions";
 import { toast } from 'sonner';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
+import { AuthLoading } from '@/components/auth-loading';
 
 // Submit button component that shows loading state
 function SubmitButton() {
@@ -28,6 +30,7 @@ function SubmitButton() {
 }
 
 export default function SignUpPage() {
+  const isLoading = useAuthRedirect();
   const [state, formAction] = useActionState(signup, { errors: {} });
 
   // Show toast notifications when errors occur
@@ -38,6 +41,11 @@ export default function SignUpPage() {
       })
     }
   }, [state.errors?._form])
+
+  // Show loading while checking session
+  if (isLoading) {
+    return <AuthLoading />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center p-4 relative overflow-hidden">

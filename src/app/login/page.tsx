@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Mail, Lock, ArrowLeft, AlertCircle, Sparkles } from "lucide-react";
 import { toast } from 'sonner';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
+import { AuthLoading } from '@/components/auth-loading';
 
 interface LoginFormData {
   email: string;
@@ -18,15 +20,21 @@ interface LoginFormData {
 }
 
 const LoginPage = () => {
+  const isLoading = useAuthRedirect();
   const { register, handleSubmit } = useForm<LoginFormData>();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Show loading while checking session
+  if (isLoading) {
+    return <AuthLoading />;
+  }
   
   const onSubmit = async (data: LoginFormData) => {
     console.log("Form submitted successfully!", data);
     setError(null);
-    setIsLoading(true);
+    setIsSubmitting(true);
     
     try {
       const result = await signIn('credentials', {
@@ -54,7 +62,7 @@ const LoginPage = () => {
         description: 'Something went wrong during sign in. Please try again.'
       })
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -138,11 +146,11 @@ const LoginPage = () => {
               {/* Submit Button */}
               <Button 
                 type="submit" 
-                loading={isLoading}
-                disabled={isLoading}
+                loading={isSubmitting}
+                disabled={isSubmitting}
                 className="w-full py-6 text-base font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-xl hover:shadow-green-500/50 hover:scale-[1.02] transition-all"
               >
-                {isLoading ? 'Signing in...' : 'Sign In'}
+                {isSubmitting ? 'Signing in...' : 'Sign In'}
               </Button>
 
               {/* Divider */}
