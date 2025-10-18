@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { toast } from 'sonner'
 import { 
   toggleActivityComplete, 
   createActivityTemplate, 
@@ -91,8 +92,10 @@ export function useActivityManagement(
         icon: result.data.icon,
         selected: false
       }])
+      toast.success('Activity created successfully!')
     } else {
       console.error('Failed to create activity:', result.error)
+      toast.error('Failed to create activity. Please try again.')
     }
   }
 
@@ -120,8 +123,11 @@ export function useActivityManagement(
       icon
     )
 
-    if (!result.success) {
+    if (result.success) {
+      toast.success('Activity updated successfully!')
+    } else {
       console.error('Failed to update activity:', result.error)
+      toast.error('Failed to update activity. Please try again.')
       // Revert on error
       setTemplates(oldTemplates)
     }
@@ -135,8 +141,11 @@ export function useActivityManagement(
 
     const result = await deleteActivityTemplate(parseInt(templateId))
 
-    if (!result.success) {
+    if (result.success) {
+      toast.success('Activity deleted successfully!')
+    } else {
       console.error('Failed to delete activity:', result.error)
+      toast.error('Failed to delete activity. Please try again.')
       // Revert on error
       setTemplates(oldTemplates)
     }

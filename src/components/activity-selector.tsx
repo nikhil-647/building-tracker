@@ -100,15 +100,15 @@ export function ActivitySelector({
               {templates.map((template) => (
                 <div
                   key={template.id}
-                  className="relative p-4 rounded-lg border-2 border-border bg-card transition-all"
+                  className="relative p-4 pr-20 rounded-lg border-2 border-border bg-card transition-all"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-secondary text-foreground">
+                    <div className="p-2 rounded-lg bg-secondary text-foreground flex-shrink-0">
                       {getActivityIcon(template.icon)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold">{template.name}</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="font-semibold break-words">{template.name}</div>
+                      <div className="text-sm text-muted-foreground break-words">
                         {template.description}
                       </div>
                     </div>

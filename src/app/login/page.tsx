@@ -21,10 +21,12 @@ const LoginPage = () => {
   const { register, handleSubmit } = useForm<LoginFormData>();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   
   const onSubmit = async (data: LoginFormData) => {
     console.log("Form submitted successfully!", data);
     setError(null);
+    setIsLoading(true);
     
     try {
       const result = await signIn('credentials', {
@@ -51,6 +53,8 @@ const LoginPage = () => {
       toast.error('An error occurred', {
         description: 'Something went wrong during sign in. Please try again.'
       })
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -134,9 +138,11 @@ const LoginPage = () => {
               {/* Submit Button */}
               <Button 
                 type="submit" 
+                loading={isLoading}
+                disabled={isLoading}
                 className="w-full py-6 text-base font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-xl hover:shadow-green-500/50 hover:scale-[1.02] transition-all"
               >
-                Sign In
+                {isLoading ? 'Signing in...' : 'Sign In'}
               </Button>
 
               {/* Divider */}
