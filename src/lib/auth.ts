@@ -1,5 +1,6 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
+import Google from "next-auth/providers/google"
 import { db } from "./db"
 
 /**
@@ -7,6 +8,7 @@ import { db } from "./db"
  * 
  * This file configures authentication using:
  * - Credentials provider (email/password)
+ * - Google OAuth provider
  * - JWT session strategy (stateless, no session table needed)
  * - Prisma database for user lookup
  * 
@@ -18,6 +20,10 @@ import { db } from "./db"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
     Credentials({
       name: "Credentials",
       credentials: {
@@ -87,10 +93,52 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
+    // Handle user sign-in for OAuth providers
+    async signIn({ user, account }) {
+      // For OAuth providers (like Google), create user if doesn't exist
+      if (account?.provider === "google") {
+        try {
+          const existingUser = await db.user.findUnique({
+            where: { email: user.email! }
+          })
+
+          if (!existingUser) {
+            // Create new user for OAuth sign-in
+            await db.user.create({
+              data: {
+                email: user.email!,
+                name: user.name || user.email!.split('@')[0],
+                image: user.image,
+                password: '', // Empty password for OAuth users
+              }
+            })
+          } else {
+            // Update existing user's image if it changed
+            if (user.image && existingUser.image !== user.image) {
+              await db.user.update({
+                where: { email: user.email! },
+                data: { image: user.image }
+              })
+            }
+          }
+        } catch (error) {
+          console.error("Error during OAuth sign-in:", error)
+          return false
+        }
+      }
+      return true
+    },
     // Add user id to JWT token
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
-        token.id = user.id
+        // Fetch user from database to get the ID
+        const dbUser = await db.user.findUnique({
+          where: { email: user.email! },
+          select: { id: true }
+        })
+        if (dbUser) {
+          token.id = dbUser.id.toString()
+        }
       }
       return token
     },
