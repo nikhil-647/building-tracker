@@ -49,7 +49,7 @@ export function Navbar({ user }: NavbarProps) {
             {/* Logo */}
             <div className="flex items-center space-x-2">
               <Building2 className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold">Building Tracker</span>
+              <span className="text-xl font-bold">FlexTrack Pro</span>
             </div>
 
             {/* Desktop Navigation */}

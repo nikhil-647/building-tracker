@@ -24,6 +24,10 @@ export default async function Home() {
             Transform Your Life Today
           </div>
           
+          <div className="mb-4">
+            <span className="text-2xl font-bold text-green-600">FlexTrack Pro</span>
+          </div>
+          
           <h1 className="text-7xl md:text-8xl font-black mb-8 leading-tight">
             <span className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent animate-pulse">
               Track. Achieve.
@@ -193,6 +197,9 @@ export default async function Home() {
       {/* Footer */}
       <footer className="border-t border-slate-200 mt-32 bg-white/50 backdrop-blur">
         <div className="container mx-auto px-4 py-12 text-center">
+          <div className="mb-4">
+            <p className="text-2xl font-bold text-green-600 mb-2">FlexTrack Pro</p>
+          </div>
           <div className="flex items-center justify-center gap-2 mb-4">
             <Heart className="w-5 h-5 text-red-500 animate-pulse" />
             <p className="text-slate-700 font-semibold text-lg">Built with passion for better habits</p>
