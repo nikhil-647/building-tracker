@@ -69,100 +69,122 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   const currentMonthEnd = now.endOf('month').toDate()
   const previousMonthStart = now.subtract(1, 'month').startOf('month').toDate()
   const previousMonthEnd = now.subtract(1, 'month').endOf('month').toDate()
+  const today = dayjs.utc().startOf('day')
+  const last7DaysStart = today.subtract(6, 'day').toDate()
+  const last7DaysEnd = today.endOf('day').toDate()
 
-  // Fetch current month's workout logs count
-  const currentMonthWorkouts = await db.workoutLog.count({
-    where: {
-      userId: user.id,
-      date: {
-        gte: currentMonthStart,
-        lte: currentMonthEnd
+  // 🚀 IMPROVEMENT #1: Parallel Queries
+  // Execute all independent queries simultaneously instead of sequentially
+  // This reduces total query time from sum of all queries to max of any single query
+  const [
+    currentMonthWorkouts,
+    previousMonthWorkouts,
+    currentMonthActivities,
+    previousMonthActivities,
+    dailyGoal,
+    weeklyWorkoutData,
+    weeklyActivityData
+  ] = await Promise.all([
+    // Current month's workout logs count
+    db.workoutLog.count({
+      where: {
+        userId: user.id,
+        date: {
+          gte: currentMonthStart,
+          lte: currentMonthEnd
+        }
       }
-    }
-  })
-
-  // Fetch previous month's workout logs count
-  const previousMonthWorkouts = await db.workoutLog.count({
-    where: {
-      userId: user.id,
-      date: {
-        gte: previousMonthStart,
-        lte: previousMonthEnd
+    }),
+    // Previous month's workout logs count
+    db.workoutLog.count({
+      where: {
+        userId: user.id,
+        date: {
+          gte: previousMonthStart,
+          lte: previousMonthEnd
+        }
       }
-    }
-  })
-
-  // Fetch current month's completed activities
-  const currentMonthActivities = await db.dailyActivity.count({
-    where: {
-      userId: user.id,
-      status: 'completed',
-      date: {
-        gte: currentMonthStart,
-        lte: currentMonthEnd
+    }),
+    // Current month's completed activities
+    db.dailyActivity.count({
+      where: {
+        userId: user.id,
+        status: 'completed',
+        date: {
+          gte: currentMonthStart,
+          lte: currentMonthEnd
+        }
       }
-    }
-  })
-
-  // Fetch previous month's completed activities
-  const previousMonthActivities = await db.dailyActivity.count({
-    where: {
-      userId: user.id,
-      status: 'completed',
-      date: {
-        gte: previousMonthStart,
-        lte: previousMonthEnd
+    }),
+    // Previous month's completed activities
+    db.dailyActivity.count({
+      where: {
+        userId: user.id,
+        status: 'completed',
+        date: {
+          gte: previousMonthStart,
+          lte: previousMonthEnd
+        }
       }
-    }
-  })
+    }),
+    // User's daily goal (count of active activity templates)
+    db.activityTemplate.count({
+      where: {
+        userId: user.id,
+        isActive: true
+      }
+    }),
+    // 🚀 IMPROVEMENT #2 & #3: Database-level aggregation for workouts
+    // Use groupBy to aggregate at the database instead of fetching all records
+    // and counting in JavaScript. This eliminates over-fetching.
+    db.workoutLog.groupBy({
+      by: ['date'],
+      where: {
+        userId: user.id,
+        date: {
+          gte: last7DaysStart,
+          lte: last7DaysEnd
+        }
+      },
+      _count: {
+        id: true
+      }
+    }),
+    // Database-level aggregation for activities
+    db.dailyActivity.groupBy({
+      by: ['date'],
+      where: {
+        userId: user.id,
+        status: 'completed',
+        date: {
+          gte: last7DaysStart,
+          lte: last7DaysEnd
+        }
+      },
+      _count: {
+        id: true
+      }
+    })
+  ]);
 
   // Calculate changes
   const workoutsChange = currentMonthWorkouts - previousMonthWorkouts
   const activitiesChange = currentMonthActivities - previousMonthActivities
 
-  // Fetch user's daily goal (count of active activity templates)
-  const dailyGoal = await db.activityTemplate.count({
-    where: {
-      userId: user.id,
-      isActive: true
-    }
+  // Build lookup maps for quick access (O(1) instead of O(n) filtering)
+  const workoutsByDate = new Map<string, number>()
+  weeklyWorkoutData.forEach(item => {
+    const dateString = dayjs.utc(item.date).format('YYYY-MM-DD')
+    workoutsByDate.set(dateString, item._count.id)
   })
 
-  // Fetch today + last 6 days activity data (7 days total)
-  const today = dayjs.utc().startOf('day')
-  const last7DaysStart = today.subtract(6, 'day').toDate()
-  const last7DaysEnd = today.endOf('day').toDate()
-
-  // Fetch workout logs for today + last 6 days
-  const last7DaysWorkoutLogs = await db.workoutLog.findMany({
-    where: {
-      userId: user.id,
-      date: {
-        gte: last7DaysStart,
-        lte: last7DaysEnd
-      }
-    },
-    select: {
-      date: true
-    }
+  const activitiesByDate = new Map<string, number>()
+  weeklyActivityData.forEach(item => {
+    const dateString = dayjs.utc(item.date).format('YYYY-MM-DD')
+    activitiesByDate.set(dateString, item._count.id)
   })
 
-  // Fetch completed activities for today + last 6 days
-  const last7DaysActivities = await db.dailyActivity.findMany({
-    where: {
-      userId: user.id,
-      status: 'completed',
-      date: {
-        gte: last7DaysStart,
-        lte: last7DaysEnd
-      }
-    },
-    select: {
-      date: true
-    }
-  })
-
-  // Create daily breakdown
+  // Create daily breakdown with guaranteed coverage of all 7 days
   const dailyBreakdown: DailyActivityData[] = []
   let totalWorkouts = 0
   let totalActivities = 0
@@ -172,15 +194,9 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     const currentDate = today.subtract(i, 'day')
     const dateString = currentDate.format('YYYY-MM-DD')
 
-    // Count workouts for this date
-    const workoutsForDay = last7DaysWorkoutLogs.filter(log => {
-      return dayjs.utc(log.date).format('YYYY-MM-DD') === dateString
-    }).length
-
-    // Count activities for this date
-    const activitiesForDay = last7DaysActivities.filter(activity => {
-      return dayjs.utc(activity.date).format('YYYY-MM-DD') === dateString
-    }).length
+    // Get counts from maps (0 if not found)
+    const workoutsForDay = workoutsByDate.get(dateString) || 0
+    const activitiesForDay = activitiesByDate.get(dateString) || 0
 
     dailyBreakdown.push({
       date: dateString,
