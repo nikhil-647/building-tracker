@@ -5,6 +5,10 @@ import { Navbar } from '@/components/navbar'
 import { LogActivityClient } from './log-activity-client'
 import type { ActivityTemplate, ActivityProgress } from '@/types/activity'
 import { ActivityStatusEnum } from '@prisma/client'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
 
 export default async function LogActivity() {
   // Check authentication on server
@@ -24,13 +28,8 @@ export default async function LogActivity() {
     redirect('/login')
   }
 
-  // Get today's date (start of day in local timezone)
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = today.getMonth()
-  const day = today.getDate()
-  const todayDate = new Date(year, month, day)
-  todayDate.setHours(0, 0, 0, 0)
+  // Get today's date at UTC midnight to match database storage
+  const todayDate = dayjs.utc().startOf('day').toDate()
 
   // Fetch all active activity templates for this user
   const activityTemplates = await db.activityTemplate.findMany({

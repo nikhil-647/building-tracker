@@ -3,6 +3,10 @@
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { ActivityStatusEnum } from '@prisma/client'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
 
 /**
  * Toggle activity completion status for a specific date
@@ -30,10 +34,8 @@ export async function toggleActivityComplete(
       return { success: false, error: 'User not found' }
     }
 
-    // Convert date string (YYYY-MM-DD) to Date object in local timezone
-    const [year, month, day] = date.split('-').map(Number)
-    const activityDate = new Date(year, month - 1, day)
-    activityDate.setHours(0, 0, 0, 0)
+    // Convert date string (YYYY-MM-DD) to Date object at UTC midnight
+    const activityDate = dayjs.utc(date).startOf('day').toDate()
 
     // Upsert the daily activity (update if exists, create if not)
     const dailyActivity = await db.dailyActivity.upsert({
@@ -240,10 +242,8 @@ export async function getActivityData(date: string) {
       return { success: false, error: 'User not found', data: null }
     }
 
-    // Convert date string (YYYY-MM-DD) to Date object in local timezone
-    const [year, month, day] = date.split('-').map(Number)
-    const activityDate = new Date(year, month - 1, day)
-    activityDate.setHours(0, 0, 0, 0)
+    // Convert date string (YYYY-MM-DD) to Date object at UTC midnight
+    const activityDate = dayjs.utc(date).startOf('day').toDate()
 
     // Fetch all active activity templates for this user
     const templates = await db.activityTemplate.findMany({

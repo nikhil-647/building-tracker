@@ -9,6 +9,7 @@ import {
   deleteActivityTemplate 
 } from '@/app/api/activity/actions'
 import type { ActivityTemplate, ActivityProgress } from '@/types/activity'
+import dayjs from 'dayjs'
 
 export function useActivityManagement(
   initialTemplates: ActivityTemplate[],
@@ -18,13 +19,9 @@ export function useActivityManagement(
   const [progress, setProgress] = useState<ActivityProgress[]>(initialProgress)
   const [isPending, startTransition] = useTransition()
 
-  // Get today's date in YYYY-MM-DD format (local timezone)
+  // Get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = String(today.getMonth() + 1).padStart(2, '0')
-    const day = String(today.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
+    return dayjs().format('YYYY-MM-DD')
   }
 
   // Toggle activity completion

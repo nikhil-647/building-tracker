@@ -56,42 +56,6 @@ export default async function Dashboard() {
             <div className="lg:col-span-2">
               <ActivityProgress />
             </div>
-            
-            {/* Sidebar Content */}
-            <div className="space-y-6">
-
-              {/* Recent Activity */}
-              <Card className="border-2 border-green-100 shadow-lg hover:shadow-xl transition-shadow">
-                <CardHeader>
-                  <CardTitle className="text-green-700">Recent Activity</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-2 w-2 bg-emerald-500 rounded-full animate-pulse" />
-                      <span className="text-sm font-medium">Workout logged: Strength Training</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground ml-4">2 hours ago</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-2 w-2 bg-teal-500 rounded-full animate-pulse delay-200" />
-                      <span className="text-sm font-medium">Activity logged: Morning Walk</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground ml-4">4 hours ago</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-2 w-2 bg-lime-500 rounded-full animate-pulse delay-500" />
-                      <span className="text-sm font-medium">Weekly goal reminder</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground ml-4">1 day ago</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
           </div>
         </main>
       </div>

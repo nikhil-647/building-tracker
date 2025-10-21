@@ -47,10 +47,12 @@ export function Navbar({ user }: NavbarProps) {
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <div className="flex items-center space-x-2">
-              <Building2 className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold">FlexTrack Pro</span>
-            </div>
+            <Link href="/dashboard">
+              <div className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
+                <Building2 className="h-8 w-8 text-primary" />
+                <span className="text-xl font-bold">FlexTrack Pro</span>
+              </div>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">

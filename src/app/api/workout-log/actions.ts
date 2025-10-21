@@ -3,6 +3,10 @@
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { MuscleGroupEnum } from '@prisma/client'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
 
 /**
  * Save or update a workout log entry
@@ -62,8 +66,8 @@ export async function saveWorkoutSet(
       })
     }
 
-    // Convert date string to Date object
-    const workoutDate = new Date(date)
+    // Convert date string to Date object at UTC midnight
+    const workoutDate = dayjs.utc(date).startOf('day').toDate()
 
     // Upsert the workout log (update if exists, create if not)
     const workoutLog = await db.workoutLog.upsert({
@@ -159,8 +163,8 @@ export async function deleteWorkoutSet(
       return { success: false, error: 'Exercise plan not found' }
     }
 
-    // Convert date string to Date object
-    const workoutDate = new Date(date)
+    // Convert date string to Date object at UTC midnight
+    const workoutDate = dayjs.utc(date).startOf('day').toDate()
 
     // Delete the workout log entry
     await db.workoutLog.delete({
@@ -208,8 +212,8 @@ export async function getWorkoutLogsByDate(date: string) {
       return { success: false, error: 'User not found', data: [] }
     }
 
-    // Convert date string to Date object
-    const workoutDate = new Date(date)
+    // Convert date string to Date object at UTC midnight
+    const workoutDate = dayjs.utc(date).startOf('day').toDate()
 
     // Fetch workout logs for this date
     const workoutLogs = await db.workoutLog.findMany({
