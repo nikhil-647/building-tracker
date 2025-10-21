@@ -17,6 +17,37 @@ interface SetLoggerProps {
   onRemoveSet: (setId: string) => void
 }
 
+// Helper functions for input validation
+const handleNumericKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const allowedKeys = [46, 8, 9, 27, 13, 110, 190] // Delete, Backspace, Tab, Escape, Enter, Decimal
+  const isModifierKey = e.ctrlKey || e.metaKey
+  const isNavigationKey = e.keyCode >= 35 && e.keyCode <= 40 // Home, End, Arrows
+  const isNumberKey = (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105) // 0-9
+  const isCopyPaste = isModifierKey && [65, 67, 86, 88].includes(e.keyCode) // Ctrl/Cmd+A/C/V/X
+  
+  if (allowedKeys.includes(e.keyCode) || isNavigationKey || isCopyPaste || (!e.shiftKey && isNumberKey)) {
+    return
+  }
+  
+  e.preventDefault()
+}
+
+const handleDecimalInput = (e: React.FormEvent<HTMLInputElement>) => {
+  const target = e.target as HTMLInputElement
+  target.value = target.value.replace(/[^0-9.]/g, '')
+  
+  // Prevent multiple decimal points
+  const parts = target.value.split('.')
+  if (parts.length > 2) {
+    target.value = parts[0] + '.' + parts.slice(1).join('')
+  }
+}
+
+const handleIntegerInput = (e: React.FormEvent<HTMLInputElement>) => {
+  const target = e.target as HTMLInputElement
+  target.value = target.value.replace(/[^0-9]/g, '')
+}
+
 export function SetLogger({ 
   selectedExercise,
   exerciseSets,
@@ -71,7 +102,7 @@ export function SetLogger({
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor={`weight-${set.id}`} className="text-sm font-medium">Weight (lbs)</Label>
+                          <Label htmlFor={`weight-${set.id}`} className="text-sm font-medium">Weight (Kg)</Label>
                           <Input
                             id={`weight-${set.id}`}
                             type="number"
@@ -80,6 +111,8 @@ export function SetLogger({
                             onChange={(e) => onUpdateSet(set.id, { 
                               weight: e.target.value ? parseFloat(e.target.value) : null 
                             })}
+                            onKeyDown={handleNumericKeyDown}
+                            onInput={handleDecimalInput}
                             className="w-full"
                           />
                         </div>
@@ -94,6 +127,8 @@ export function SetLogger({
                             onChange={(e) => onUpdateSet(set.id, { 
                               reps: e.target.value ? parseInt(e.target.value) : null 
                             })}
+                            onKeyDown={handleNumericKeyDown}
+                            onInput={handleIntegerInput}
                             className="w-full"
                           />
                         </div>
