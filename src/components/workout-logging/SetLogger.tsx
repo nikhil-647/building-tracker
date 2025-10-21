@@ -75,6 +75,7 @@ export function SetLogger({
                           <Input
                             id={`weight-${set.id}`}
                             type="number"
+                            inputMode="decimal"
                             placeholder="0"
                             value={set.weight || ''}
                             onChange={(e) => onUpdateSet(set.id, { 
@@ -89,6 +90,7 @@ export function SetLogger({
                           <Input
                             id={`reps-${set.id}`}
                             type="number"
+                            inputMode="decimal"
                             placeholder="0"
                             value={set.reps || ''}
                             onChange={(e) => onUpdateSet(set.id, { 
