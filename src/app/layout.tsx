@@ -46,11 +46,14 @@ export const metadata: Metadata = {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
       { url: '/favicon.ico', sizes: 'any' },
-      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+      { url: '/192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/512.png', sizes: '512x512', type: 'image/png' },
     ],
     apple: [
-      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/180.png', sizes: '180x180', type: 'image/png' },
+      { url: '/167.png', sizes: '167x167', type: 'image/png' },
+      { url: '/152.png', sizes: '152x152', type: 'image/png' },
+      { url: '/120.png', sizes: '120x120', type: 'image/png' },
     ],
   },
 }
