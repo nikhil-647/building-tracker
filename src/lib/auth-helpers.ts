@@ -18,9 +18,9 @@ export async function redirectIfAuthenticated(redirectTo: string = '/dashboard')
  * Server-side helper to redirect unauthenticated users
  * Use this in server components to protect pages that require authentication
  * 
- * @param redirectTo - The path to redirect unauthenticated users to (default: '/login')
+ * @param redirectTo - The path to redirect unauthenticated users to (default: '/')
  */
-export async function redirectIfNotAuthenticated(redirectTo: string = '/login') {
+export async function redirectIfNotAuthenticated(redirectTo: string = '/') {
   const session = await auth();
   if (!session?.user) {
     redirect(redirectTo);

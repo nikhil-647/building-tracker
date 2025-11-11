@@ -25,7 +25,7 @@ export function Navbar({ user }: NavbarProps) {
 
   const handleSignOut = async () => {
     setIsMobileMenuOpen(false) // Close mobile menu before signing out
-    await signOut({ callbackUrl: '/login' })
+    await signOut({ callbackUrl: '/' })
   }
 
   // Prevent body scroll when mobile menu is open
