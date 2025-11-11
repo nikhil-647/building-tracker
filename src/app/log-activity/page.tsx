@@ -14,9 +14,9 @@ export default async function LogActivity() {
   // Check authentication on server
   const session = await auth()
 
-  // Redirect to login if not authenticated
+  // Redirect to homepage if not authenticated
   if (!session?.user) {
-    redirect('/login')
+    redirect('/')
   }
 
   // Get user from database
@@ -25,7 +25,7 @@ export default async function LogActivity() {
   })
 
   if (!user) {
-    redirect('/login')
+    redirect('/')
   }
 
   // Get today's date at UTC midnight to match database storage

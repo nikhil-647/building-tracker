@@ -9,9 +9,9 @@ export default async function LogWorkout() {
   // Check authentication on server
   const session = await auth()
 
-  // Redirect to login if not authenticated
+  // Redirect to homepage if not authenticated
   if (!session?.user) {
-    redirect('/login')
+    redirect('/')
   }
 
   // Get user from database
@@ -20,7 +20,7 @@ export default async function LogWorkout() {
   })
 
   if (!user) {
-    redirect('/login')
+    redirect('/')
   }
 
   // Fetch all muscle groups (always show these)

@@ -9,9 +9,9 @@ import { redirect } from 'next/navigation'
 export default async function Dashboard() {
   const session = await auth()
   
-  // Redirect to login if not authenticated
+  // Redirect to homepage if not authenticated
   if (!session?.user) {
-    redirect('/login')
+    redirect('/')
   }
 
   return (
