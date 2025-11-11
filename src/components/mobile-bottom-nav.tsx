@@ -9,6 +9,48 @@ import { cn } from '@/lib/utils'
 
 export function MobileBottomNav() {
   const pathname = usePathname()
+  const [isKeyboardVisible, setIsKeyboardVisible] = React.useState(false)
+
+  React.useEffect(() => {
+    // Hide bottom nav when keyboard appears (input/textarea focused)
+    const handleFocusIn = (e: FocusEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        setIsKeyboardVisible(true)
+      }
+    }
+
+    const handleFocusOut = (e: FocusEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        // Small delay to prevent flickering
+        setTimeout(() => setIsKeyboardVisible(false), 100)
+      }
+    }
+
+    // Visual Viewport API for more accurate keyboard detection
+    const handleResize = () => {
+      if (window.visualViewport) {
+        const viewportHeight = window.visualViewport.height
+        const windowHeight = window.innerHeight
+        // If viewport is significantly smaller than window, keyboard is likely visible
+        setIsKeyboardVisible(windowHeight - viewportHeight > 150)
+      }
+    }
+
+    document.addEventListener('focusin', handleFocusIn)
+    document.addEventListener('focusout', handleFocusOut)
+    
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize)
+    }
+
+    return () => {
+      document.removeEventListener('focusin', handleFocusIn)
+      document.removeEventListener('focusout', handleFocusOut)
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize)
+      }
+    }
+  }, [])
 
   const navItems = [
     {
@@ -31,8 +73,21 @@ export function MobileBottomNav() {
     },
   ]
 
+  // Hide nav when keyboard is visible
+  if (isKeyboardVisible) {
+    return null
+  }
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden border-t border-neutral-800 bg-neutral-950/98 backdrop-blur-lg safe-area-inset-bottom">
+    <nav 
+      className="fixed left-0 right-0 z-50 md:hidden border-t border-neutral-800 bg-neutral-950/98 backdrop-blur-lg transition-transform duration-200"
+      style={{ 
+        bottom: 0,
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        paddingLeft: 'env(safe-area-inset-left)',
+        paddingRight: 'env(safe-area-inset-right)'
+      }}
+    >
       <div className="grid grid-cols-3 h-14 sm:h-16">
         {navItems.map((item) => {
           const isActive = pathname === item.href

@@ -45,8 +45,8 @@ export function Navbar({ user }: NavbarProps) {
   return (
     <>
       {/* Mobile header - Only shows logo and user button */}
-      <header className="sticky top-0 z-50 w-full border-b border-neutral-800 bg-neutral-950/95 backdrop-blur md:hidden">
-        <div className="flex h-12 items-center justify-between px-3">
+      <header className="sticky top-0 z-50 w-full border-b border-neutral-800 bg-neutral-950/95 backdrop-blur md:hidden" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+        <div className="flex h-12 items-center justify-between px-3" style={{ paddingLeft: 'max(0.75rem, env(safe-area-inset-left))', paddingRight: 'max(0.75rem, env(safe-area-inset-right))' }}>
           <Link href="/dashboard">
             <div className="flex items-center space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity">
               <Flame className="h-6 w-6 text-orange-500" />
@@ -72,8 +72,8 @@ export function Navbar({ user }: NavbarProps) {
       </header>
 
       {/* Desktop and tablet navbar */}
-      <nav className="sticky top-0 z-50 w-full border-b border-neutral-800 bg-neutral-950/95 backdrop-blur hidden md:block">
-        <div className="container mx-auto px-4">
+      <nav className="sticky top-0 z-50 w-full border-b border-neutral-800 bg-neutral-950/95 backdrop-blur hidden md:block" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+        <div className="container mx-auto px-4" style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}>
           <div className="flex h-14 items-center justify-between">
             {/* Logo */}
             <Link href="/dashboard">
