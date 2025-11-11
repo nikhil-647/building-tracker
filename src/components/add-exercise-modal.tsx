@@ -111,13 +111,13 @@ export function AddExerciseModal({ isOpen, onClose, onSave, selectedMuscleGroup 
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-neutral-900 border-neutral-800 text-white">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-white">
             <GymIcon icon={gymIcons.dumbbell} className="h-5 w-5" />
             Add New Exercise
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-neutral-400">
             Select an exercise to add to your {selectedMuscleGroup} workout plan.
           </DialogDescription>
         </DialogHeader>
@@ -125,29 +125,29 @@ export function AddExerciseModal({ isOpen, onClose, onSave, selectedMuscleGroup 
         <div className="grid gap-4 py-4">
           {/* General Error Message */}
           {errors.general && (
-            <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+            <div className="p-3 text-sm text-red-400 bg-red-950/30 border border-red-900/50 rounded-md">
               {errors.general}
             </div>
           )}
 
           {/* Muscle Group - Disabled (Display Only) */}
           <div className="grid gap-2">
-            <Label htmlFor="muscle-group">Muscle Group</Label>
-            <div className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm">
+            <Label htmlFor="muscle-group" className="text-neutral-300">Muscle Group</Label>
+            <div className="flex h-10 w-full rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white">
               {selectedMuscleGroup}
             </div>
           </div>
           
           {/* Exercise Name - Select Dropdown */}
           <div className="grid gap-2">
-            <Label htmlFor="exercise-name">Exercise Name</Label>
+            <Label htmlFor="exercise-name" className="text-neutral-300">Exercise Name</Label>
             {isFetchingExercises ? (
-              <div className="flex items-center justify-center p-3 border rounded-md bg-muted/50">
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                <span className="text-sm text-muted-foreground">Loading exercises...</span>
+              <div className="flex items-center justify-center p-3 border border-neutral-700 rounded-md bg-neutral-800">
+                <Loader2 className="h-4 w-4 animate-spin mr-2 text-white" />
+                <span className="text-sm text-neutral-400">Loading exercises...</span>
               </div>
             ) : availableExercises.length === 0 ? (
-              <div className="p-3 text-sm text-muted-foreground bg-muted/50 rounded-md text-center">
+              <div className="p-3 text-sm text-neutral-400 bg-neutral-800 border border-neutral-700 rounded-md text-center">
                 No available exercises. All exercises for this muscle group have been added to your plan.
               </div>
             ) : (
@@ -161,19 +161,23 @@ export function AddExerciseModal({ isOpen, onClose, onSave, selectedMuscleGroup 
                     }
                   }}
                 >
-                  <SelectTrigger className={`w-full ${errors.exercise ? 'border-destructive' : ''}`}>
-                    <SelectValue placeholder="Select an exercise" />
+                  <SelectTrigger className={`w-full bg-neutral-800 border-neutral-700 text-white [&>span]:text-neutral-400 ${errors.exercise ? 'border-red-500' : ''}`}>
+                    <SelectValue placeholder="Select an exercise" className="text-neutral-400" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-neutral-800 border-neutral-700">
                     {availableExercises.map((exercise) => (
-                      <SelectItem key={exercise.id} value={exercise.id.toString()}>
+                      <SelectItem 
+                        key={exercise.id} 
+                        value={exercise.id.toString()}
+                        className="text-white focus:bg-neutral-700 focus:text-white cursor-pointer"
+                      >
                         {exercise.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 {errors.exercise && (
-                  <p className="text-sm text-destructive">{errors.exercise}</p>
+                  <p className="text-sm text-red-400">{errors.exercise}</p>
                 )}
               </>
             )}
@@ -182,9 +186,8 @@ export function AddExerciseModal({ isOpen, onClose, onSave, selectedMuscleGroup 
         
         <DialogFooter className="gap-2">
           <Button 
-            variant="outline" 
             onClick={handleClose} 
-            className="gap-2"
+            className="gap-2 bg-white text-neutral-950 hover:bg-neutral-200"
             disabled={isLoading}
           >
             <X className="h-4 w-4" />
@@ -192,7 +195,7 @@ export function AddExerciseModal({ isOpen, onClose, onSave, selectedMuscleGroup 
           </Button>
           <Button 
             onClick={handleSave} 
-            className="gap-2"
+            className="gap-2 bg-white text-neutral-950 hover:bg-neutral-200"
             disabled={isLoading || isFetchingExercises || availableExercises.length === 0}
           >
             {isLoading ? (

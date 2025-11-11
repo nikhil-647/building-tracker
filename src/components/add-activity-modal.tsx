@@ -188,13 +188,13 @@ export function AddActivityModal({ isOpen, onClose, onSave, editActivity }: AddA
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] bg-neutral-900 border-neutral-800 text-white">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-white">
             <Plus className="h-5 w-5" />
             {editActivity ? 'Edit Activity' : 'Add New Activity'}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-neutral-400">
             {editActivity 
               ? 'Update your activity details.' 
               : 'Create a custom activity to track your daily habits and goals.'}
@@ -204,7 +204,7 @@ export function AddActivityModal({ isOpen, onClose, onSave, editActivity }: AddA
         <div className="grid gap-4 py-4">
           {/* Activity Name */}
           <div className="grid gap-2">
-            <Label htmlFor="activity-name">Activity Name</Label>
+            <Label htmlFor="activity-name" className="text-neutral-300">Activity Name</Label>
             <Input
               id="activity-name"
               placeholder="e.g., 10K Steps, 8 Glasses of Water"
@@ -213,16 +213,16 @@ export function AddActivityModal({ isOpen, onClose, onSave, editActivity }: AddA
                 setFormData({ ...formData, name: e.target.value })
                 if (errors.name) setErrors({ ...errors, name: '' })
               }}
-              className={errors.name ? 'border-destructive' : ''}
+              className={`bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 ${errors.name ? 'border-red-500' : ''}`}
             />
             {errors.name && (
-              <p className="text-sm text-destructive">{errors.name}</p>
+              <p className="text-sm text-red-400">{errors.name}</p>
             )}
           </div>
 
           {/* Description */}
           <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-neutral-300">Description</Label>
             <Input
               id="description"
               placeholder="e.g., Walk 10,000 steps today"
@@ -231,38 +231,42 @@ export function AddActivityModal({ isOpen, onClose, onSave, editActivity }: AddA
                 setFormData({ ...formData, description: e.target.value })
                 if (errors.description) setErrors({ ...errors, description: '' })
               }}
-              className={errors.description ? 'border-destructive' : ''}
+              className={`bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 ${errors.description ? 'border-red-500' : ''}`}
             />
             {errors.description && (
-              <p className="text-sm text-destructive">{errors.description}</p>
+              <p className="text-sm text-red-400">{errors.description}</p>
             )}
           </div>
 
           {/* Icon */}
           <div className="grid gap-2">
-            <Label htmlFor="icon">Icon</Label>
+            <Label htmlFor="icon" className="text-neutral-300">Icon</Label>
             <Select
               value={formData.icon}
               onValueChange={(value) => setFormData({ ...formData, icon: value })}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full bg-neutral-800 border-neutral-700 text-white [&>svg]:text-neutral-400">
                 <SelectValue>
                   {formData.icon && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-white">
                       {React.createElement(
                         activityIcons.find(i => i.value === formData.icon)?.icon || Activity,
-                        { className: "h-4 w-4" }
+                        { className: "h-4 w-4 text-white" }
                       )}
                       <span>{activityIcons.find(i => i.value === formData.icon)?.label}</span>
                     </div>
                   )}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="max-h-[300px] overflow-y-auto">
+              <SelectContent className="max-h-[300px] overflow-y-auto bg-neutral-800 border-neutral-700">
                 {activityIcons.map((iconItem) => (
-                  <SelectItem key={iconItem.value} value={iconItem.value}>
-                    <div className="flex items-center gap-2">
-                      <iconItem.icon className="h-4 w-4" />
+                  <SelectItem 
+                    key={iconItem.value} 
+                    value={iconItem.value}
+                    className="text-white focus:bg-neutral-700 focus:text-white cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 text-white">
+                      <iconItem.icon className="h-4 w-4 text-white" />
                       <span>{iconItem.label}</span>
                     </div>
                   </SelectItem>
@@ -274,16 +278,15 @@ export function AddActivityModal({ isOpen, onClose, onSave, editActivity }: AddA
         
         <DialogFooter className="gap-2">
           <Button 
-            variant="outline" 
             onClick={handleClose} 
-            className="gap-2"
+            className="gap-2 bg-white text-neutral-950 hover:bg-neutral-200"
           >
             <X className="h-4 w-4" />
             Cancel
           </Button>
           <Button 
             onClick={handleSave} 
-            className="gap-2"
+            className="gap-2 bg-white text-neutral-950 hover:bg-neutral-200"
           >
             <Save className="h-4 w-4" />
             {editActivity ? 'Update Activity' : 'Add Activity'}

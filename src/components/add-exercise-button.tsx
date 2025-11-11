@@ -23,13 +23,12 @@ export function AddExerciseButton({ muscleGroup }: AddExerciseButtonProps) {
   return (
     <>
       <Button
-        variant="ghost"
         size="sm"
         onClick={(e) => {
           e.stopPropagation()
           setIsOpen(true)
         }}
-        className="gap-2"
+        className="gap-2 bg-white text-neutral-950 hover:bg-neutral-200"
       >
         <Plus className="h-4 w-4" />
         Add Exercise

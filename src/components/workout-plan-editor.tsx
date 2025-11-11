@@ -20,16 +20,16 @@ export function WorkoutPlanEditor({ muscleGroups, userExercisePlan }: WorkoutPla
     <>
       {/* Workout Plan Header */}
       <Card 
-        className="hover:bg-accent/50 transition-colors cursor-pointer" 
+        className="bg-neutral-900 border-neutral-800 hover:bg-neutral-800 transition-colors cursor-pointer" 
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex items-center justify-between text-white">
             <span className="text-xl font-bold">My Workout Plan</span>
             {isExpanded ? (
-              <ChevronDown className="h-5 w-5 text-muted-foreground" />
+              <ChevronDown className="h-5 w-5 text-neutral-400" />
             ) : (
-              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              <ChevronRight className="h-5 w-5 text-neutral-400" />
             )}
           </CardTitle>
         </CardHeader>

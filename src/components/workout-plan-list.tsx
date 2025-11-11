@@ -13,9 +13,9 @@ interface WorkoutPlanListProps {
 
 export function WorkoutPlanList({ muscleGroups, userExercisePlan }: WorkoutPlanListProps) {
   return (
-    <Card>
+    <Card className="bg-neutral-900 border-neutral-800">
       <CardHeader>
-        <CardTitle>Muscle Groups</CardTitle>
+        <CardTitle className="text-white">Muscle Groups</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -24,12 +24,12 @@ export function WorkoutPlanList({ muscleGroups, userExercisePlan }: WorkoutPlanL
             const MuscleIcon = getMuscleGroupIcon(muscleGroup.name)
             
             return (
-              <Card key={muscleGroup.id} className="overflow-hidden hover:bg-accent/50">
+              <Card key={muscleGroup.id} className="overflow-hidden bg-neutral-800 border-neutral-700 hover:bg-neutral-750 hover:border-neutral-600">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <GymIcon icon={MuscleIcon} className="h-5 w-5 text-primary" />
-                      <div className="px-3 py-1 rounded-full text-sm font-medium border bg-primary/10 text-primary border-primary/20">
+                      <GymIcon icon={MuscleIcon} className="h-5 w-5 text-white" />
+                      <div className="px-3 py-1 rounded-full text-sm font-medium border bg-neutral-700 text-white border-neutral-600">
                         {muscleGroup.name}
                       </div>
                     </div>
@@ -40,7 +40,7 @@ export function WorkoutPlanList({ muscleGroups, userExercisePlan }: WorkoutPlanL
                 <CardContent className="pt-0">
                   <div className="space-y-2">
                     {exercises.length === 0 ? (
-                      <div className="text-center py-8 text-muted-foreground">
+                      <div className="text-center py-8 text-neutral-500">
                         <GymIcon icon={MuscleIcon} className="h-12 w-12 mx-auto mb-3 opacity-50" />
                         <p>No exercises added yet</p>
                         <p className="text-sm">Click &quot;Add Exercise&quot; to get started</p>
@@ -49,11 +49,11 @@ export function WorkoutPlanList({ muscleGroups, userExercisePlan }: WorkoutPlanL
                       exercises.map((exercise) => (
                         <div 
                           key={exercise.planId}
-                          className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                          className="flex items-center justify-between p-3 border border-neutral-700 rounded-lg bg-neutral-800 hover:bg-neutral-750 transition-colors"
                         >
                           <div className="flex items-center gap-3">
-                            <GymIcon icon={MuscleIcon} className="h-4 w-4 text-muted-foreground" />
-                            <span className="font-medium">{exercise.name}</span>
+                            <GymIcon icon={MuscleIcon} className="h-4 w-4 text-neutral-400" />
+                            <span className="font-medium text-white">{exercise.name}</span>
                           </div>
                           <DeleteExerciseButton 
                             planId={exercise.planId}

@@ -53,9 +53,9 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
   })
 
   return (
-    <Card>
+    <Card className="bg-neutral-900 border-neutral-800">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-white">
           <Calendar className="h-5 w-5" />
           Log Workouts for Today
         </CardTitle>
@@ -63,8 +63,8 @@ export function LogWorkoutToday({ muscleGroups, allExercises }: LogWorkoutTodayP
       <CardContent>
         {isLoadingWorkout && !isWorkoutActive ? (
           <div className="text-center py-12">
-            <Loader2 className="h-12 w-12 mx-auto mb-4 animate-spin text-primary" />
-            <p className="text-muted-foreground">Loading workout data...</p>
+            <Loader2 className="h-12 w-12 mx-auto mb-4 animate-spin text-white" />
+            <p className="text-neutral-400">Loading workout data...</p>
           </div>
         ) : !isWorkoutActive ? (
           <EmptyWorkoutState 

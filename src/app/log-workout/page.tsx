@@ -90,7 +90,7 @@ export default async function LogWorkout() {
   }))
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-neutral-950">
       <Navbar user={session.user} />
       <LogWorkoutClient 
         muscleGroups={muscleGroupsData}

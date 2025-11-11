@@ -70,19 +70,19 @@ export function ActivitySelector({
 
   return (
     <>
-      <Card>
+      <Card className="bg-neutral-900 border-neutral-800">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Your Daily Activities</CardTitle>
-              <CardDescription>
-                Manage your activities - all activities are automatically tracked below
+              <CardTitle className="text-white">Your Daily Activities</CardTitle>
+              <CardDescription className="text-neutral-400">
+                Manage your activities below
               </CardDescription>
             </div>
             <Button 
               onClick={() => setIsModalOpen(true)}
               size="sm"
-              className="gap-2"
+              className="gap-2 bg-white text-neutral-950 hover:bg-neutral-200"
               disabled={isPending}
             >
               <Plus className="h-4 w-4" />
@@ -92,7 +92,7 @@ export function ActivitySelector({
         </CardHeader>
         <CardContent>
           {templates.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
+            <div className="text-center py-12 text-neutral-400">
               <p>No activities yet. Click &quot;Add Activity&quot; to create your first one!</p>
             </div>
           ) : (
@@ -100,15 +100,15 @@ export function ActivitySelector({
               {templates.map((template) => (
                 <div
                   key={template.id}
-                  className="relative p-4 pr-20 rounded-lg border-2 border-border bg-card transition-all"
+                  className="relative p-4 pr-20 rounded-lg border-2 border-neutral-700 bg-neutral-800 hover:border-neutral-600 transition-all"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-secondary text-foreground flex-shrink-0">
+                    <div className="p-2 rounded-lg bg-neutral-700 text-white flex-shrink-0">
                       {getActivityIcon(template.icon)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold break-words">{template.name}</div>
-                      <div className="text-sm text-muted-foreground break-words">
+                      <div className="font-semibold break-words text-white">{template.name}</div>
+                      <div className="text-sm text-neutral-400 break-words">
                         {template.description}
                       </div>
                     </div>
@@ -116,19 +116,19 @@ export function ActivitySelector({
                   <div className="absolute top-2 right-2 flex gap-1">
                     <button
                       onClick={() => handleEditActivity(template)}
-                      className="p-1.5 rounded-md hover:bg-secondary/80 transition-colors"
+                      className="p-1.5 rounded-md hover:bg-neutral-700 transition-colors"
                       title="Edit activity"
                       disabled={isPending}
                     >
-                      <Pencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                      <Pencil className="h-4 w-4 text-neutral-400 hover:text-white" />
                     </button>
                     <button
                       onClick={(e) => handleDeleteActivity(e, template.id)}
-                      className="p-1.5 rounded-md hover:bg-destructive/10 transition-colors"
+                      className="p-1.5 rounded-md hover:bg-red-950/30 transition-colors"
                       title="Delete activity"
                       disabled={isPending}
                     >
-                      <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                      <Trash2 className="h-4 w-4 text-neutral-400 hover:text-red-400" />
                     </button>
                   </div>
                 </div>

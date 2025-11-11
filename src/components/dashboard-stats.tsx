@@ -14,14 +14,14 @@ interface StatCardProps {
 
 export function StatCard({ title, value, change, changeType, icon }: StatCardProps) {
   return (
-    <Card>
+    <Card className="bg-neutral-900 border-neutral-800">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon}
+        <CardTitle className="text-sm font-medium text-neutral-300">{title}</CardTitle>
+        <div className="text-neutral-400">{icon}</div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground flex items-center">
+        <div className="text-2xl font-bold text-white">{value}</div>
+        <p className="text-xs text-neutral-500 flex items-center">
           {changeType === 'increase' ? (
             <ArrowUpRight className="h-3 w-3 text-emerald-500 mr-1" />
           ) : changeType === 'decrease' ? (
@@ -32,7 +32,7 @@ export function StatCard({ title, value, change, changeType, icon }: StatCardPro
               ? 'text-emerald-500' 
               : changeType === 'decrease' 
               ? 'text-orange-500' 
-              : 'text-muted-foreground'
+              : 'text-neutral-500'
           }>
             {change}
           </span>

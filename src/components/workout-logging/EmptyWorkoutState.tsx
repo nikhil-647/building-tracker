@@ -13,7 +13,7 @@ interface EmptyWorkoutStateProps {
 export function EmptyWorkoutState({ onStartWorkout, isLoading }: EmptyWorkoutStateProps) {
   return (
     <div className="space-y-4">
-      <div className="text-center py-8 text-muted-foreground">
+      <div className="text-center py-8 text-neutral-400">
         <Clock className="h-12 w-12 mx-auto mb-3 opacity-50" />
         <p className="text-lg font-medium">No workouts logged today</p>
         <p className="text-sm">Start your workout to begin logging exercises</p>
@@ -21,7 +21,7 @@ export function EmptyWorkoutState({ onStartWorkout, isLoading }: EmptyWorkoutSta
       <div className="flex justify-center">
         <Button 
           size="lg" 
-          className="gap-2" 
+          className="gap-2 bg-white text-neutral-950 hover:bg-neutral-200" 
           onClick={onStartWorkout}
           disabled={isLoading}
         >

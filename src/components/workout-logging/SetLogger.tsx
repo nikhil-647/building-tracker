@@ -41,12 +41,12 @@ export function SetLogger({
 
   return (
     <div id="log-sets-section" className="space-y-4 scroll-mt-4">
-      <h4 className="font-medium text-lg">Log Your Sets</h4>
+      <h4 className="font-medium text-lg text-white">Log Your Sets</h4>
       <div className="space-y-4">
-        <Card>
+        <Card className="bg-neutral-800 border-neutral-700">
           <CardHeader>
-            <CardTitle className="text-lg">{selectedExercise.name}</CardTitle>
-            <p className="text-sm text-muted-foreground">{selectedExercise.muscleGroup}</p>
+            <CardTitle className="text-lg text-white">{selectedExercise.name}</CardTitle>
+            <p className="text-sm text-neutral-400">{selectedExercise.muscleGroup}</p>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -55,15 +55,15 @@ export function SetLogger({
                   {exerciseSets.map((set) => (
                     <div 
                       key={set.id} 
-                      className="p-4 border rounded-lg transition-all bg-card"
+                      className="p-4 border border-neutral-700 rounded-lg transition-all bg-neutral-900"
                     >
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-medium text-muted-foreground">
+                        <span className="text-sm font-medium text-neutral-400">
                           Set {set.setNo}
                         </span>
                         <div className="flex items-center gap-2">
                           {savingSetIds.has(set.id) && (
-                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-1.5 text-xs text-neutral-400">
                               <Loader2 className="h-3.5 w-3.5 animate-spin" />
                               <span>Saving...</span>
                             </div>
@@ -72,7 +72,7 @@ export function SetLogger({
                             variant="ghost"
                             size="sm"
                             onClick={() => onRemoveSet(set.id)}
-                            className="text-destructive hover:text-destructive"
+                            className="text-red-400 hover:text-red-300 hover:bg-neutral-800"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -81,7 +81,7 @@ export function SetLogger({
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor={`weight-${set.id}`} className="text-sm font-medium">Weight (Kg)</Label>
+                          <Label htmlFor={`weight-${set.id}`} className="text-sm font-medium text-neutral-300">Weight (Kg)</Label>
                           <Input
                             id={`weight-${set.id}`}
                             type="number"
@@ -93,12 +93,12 @@ export function SetLogger({
                             onChange={(e) => onUpdateSet(set.id, { 
                               weight: e.target.value ? parseFloat(e.target.value) : null 
                             })}
-                            className="w-full"
+                            className="w-full bg-neutral-800 border-neutral-700 text-white"
                           />
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor={`reps-${set.id}`} className="text-sm font-medium">Reps</Label>
+                          <Label htmlFor={`reps-${set.id}`} className="text-sm font-medium text-neutral-300">Reps</Label>
                           <Input
                             id={`reps-${set.id}`}
                             type="number"
@@ -108,7 +108,7 @@ export function SetLogger({
                             onChange={(e) => onUpdateSet(set.id, { 
                               reps: e.target.value ? parseInt(e.target.value) : null 
                             })}
-                            className="w-full"
+                            className="w-full bg-neutral-800 border-neutral-700 text-white"
                           />
                         </div>
                       </div>
@@ -116,16 +116,15 @@ export function SetLogger({
                   ))}
                 </>
               ) : (
-                <div className="text-center py-6 text-muted-foreground">
+                <div className="text-center py-6 text-neutral-500">
                   <p className="text-sm">Click &quot;+ Add Set&quot; to start logging sets for this exercise</p>
                 </div>
               )}
               
               <Button
-                variant="outline"
                 size="sm"
                 onClick={onAddNewSet}
-                className="w-full gap-2"
+                className="w-full gap-2 bg-white text-neutral-950 hover:bg-neutral-200"
               >
                 <Plus className="h-4 w-4" />
                 Add Set
@@ -137,9 +136,9 @@ export function SetLogger({
 
       {/* Quick Weight Selector */}
       {focusedSetId && (
-        <div className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 animate-in slide-in-from-bottom-5 duration-200">
-          <div className="max-w-2xl mx-auto px-4 py-3">
-            <div className="text-xs font-medium text-muted-foreground mb-2 text-center">
+        <div className="fixed bottom-0 left-0 right-0 bg-neutral-900 border-t-2 border-neutral-700 shadow-2xl z-50 animate-in slide-in-from-bottom-5 duration-200">
+          <div className="max-w-2xl mx-auto px-4 py-4">
+            <div className="text-sm font-semibold text-white mb-3 text-center">
               Quick Weight (Kg)
             </div>
             <div className="flex flex-wrap gap-2 justify-center">
@@ -149,7 +148,7 @@ export function SetLogger({
                   variant="outline"
                   size="sm"
                   onClick={() => handleQuickWeightSelect(weight)}
-                  className="min-w-[60px] font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+                  className="min-w-[60px] font-semibold bg-neutral-800 border-neutral-700 text-white hover:bg-white hover:text-neutral-950 hover:border-white transition-all"
                 >
                   {weight}
                 </Button>

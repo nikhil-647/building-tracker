@@ -58,7 +58,7 @@ export function DeleteExerciseButton({ planId, exerciseName, muscleGroup }: Dele
       size="sm"
       onClick={handleDelete}
       disabled={isLoading}
-      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+      className="text-red-400 hover:text-red-300 hover:bg-red-950/30"
     >
       {isLoading ? (
         <Loader2 className="h-4 w-4 animate-spin" />

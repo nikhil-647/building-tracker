@@ -25,16 +25,16 @@ export function ExerciseSelector({
 
   return (
     <div id="add-exercises-section" className="space-y-4 scroll-mt-4">
-      <h4 className="font-medium text-lg">Add Exercises</h4>
+      <h4 className="font-medium text-lg text-white">Add Exercises</h4>
       <div className="grid gap-4">
         {selectedMuscleGroups.map((muscleGroupName) => {
           const exercises = allExercises[muscleGroupName] || []
           const MuscleIcon = getMuscleGroupIcon(muscleGroupName)
           
           return (
-            <Card key={muscleGroupName}>
+            <Card key={muscleGroupName} className="bg-neutral-800 border-neutral-700">
               <CardHeader>
-                <CardTitle className="text-lg text-primary flex items-center gap-2">
+                <CardTitle className="text-lg text-white flex items-center gap-2">
                   <GymIcon icon={MuscleIcon} className="h-5 w-5" />
                   {muscleGroupName} Exercises
                 </CardTitle>
@@ -46,11 +46,11 @@ export function ExerciseSelector({
                     return (
                       <Button
                         key={exercise.id}
-                        variant={isSelected ? "default" : "outline"}
-                        className={`justify-start h-auto p-3 ${
+                        variant="outline"
+                        className={`justify-start h-auto p-3 transition-all ${
                           isSelected 
-                            ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
-                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
+                            ? 'bg-white text-neutral-950 hover:bg-neutral-200 border-white' 
+                            : 'bg-neutral-900 border-neutral-700 text-neutral-300 hover:bg-neutral-700 hover:border-neutral-600 hover:text-white'
                         }`}
                         onClick={() => onSelectExercise(exercise, muscleGroupName)}
                       >

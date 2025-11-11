@@ -65,7 +65,7 @@ export default async function LogActivity() {
   }))
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-neutral-950">
       <Navbar user={session.user} />
       <LogActivityClient 
         activityTemplates={templates}

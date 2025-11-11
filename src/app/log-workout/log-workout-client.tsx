@@ -19,15 +19,13 @@ interface LogWorkoutClientProps {
 
 export function LogWorkoutClient({ muscleGroups, userExercisePlan, allExercises }: LogWorkoutClientProps) {
   return (
-    <main className="container mx-auto px-4 py-6 space-y-6">
+    <main className="container mx-auto px-4 py-8 space-y-6 max-w-7xl">
       {/* Header Section */}
-      <div className="text-center space-y-4">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight">Log Workout</h1>
-          <p className="text-muted-foreground text-lg">
-            Track your daily exercises and log your sets with weight and reps.
-          </p>
-        </div>
+      <div className="space-y-2">
+        <h1 className="text-3xl md:text-4xl font-bold text-white">Log Workout</h1>
+        <p className="text-neutral-400 text-base">
+          Track your daily exercises and log your sets with weight and reps.
+        </p>
       </div>
 
       {/* Workout Plan Editor - Separate Component with its own state */}

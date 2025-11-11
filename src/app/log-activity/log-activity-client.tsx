@@ -34,19 +34,17 @@ export function LogActivityClient({
   const overallProgress = totalActivities > 0 ? (completedActivities / totalActivities) * 100 : 0
 
   return (
-    <main className="container mx-auto px-4 py-6 space-y-6">
+    <main className="container mx-auto px-4 py-8 space-y-6 max-w-7xl">
       {/* Header Section */}
-      <div className="text-center space-y-4">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight">Log Daily Activity</h1>
-          <p className="text-muted-foreground text-lg">
-            Track your daily habits and activities for a healthier lifestyle.
-          </p>
-        </div>
+      <div className="space-y-2">
+        <h1 className="text-3xl md:text-4xl font-bold text-white">Log Daily Activity</h1>
+        <p className="text-neutral-400 text-base">
+          Track your daily habits and build consistency.
+        </p>
       </div>
 
       {/* Daily Activity Progress - Sticky/Floating Component */}
-      <div className="sticky top-16 z-10 bg-background pb-2">
+      <div className="sticky top-16 z-10 bg-neutral-950 pb-2">
         <DailyActivityProgress
           completedActivities={completedActivities}
           totalActivities={totalActivities}

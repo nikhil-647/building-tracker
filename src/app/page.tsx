@@ -1,6 +1,6 @@
 "use client"
 
-import { Dumbbell, CheckSquare } from "lucide-react";
+import { Dumbbell, CheckSquare, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signIn } from 'next-auth/react';
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
@@ -21,6 +21,9 @@ export default function Home() {
           <div className="max-w-6xl mx-auto">
             {/* Main Heading - Centered on desktop */}
             <div className="mb-16 text-center">
+              <div className="flex justify-center mb-8">
+                <Flame className="h-20 w-20 md:h-28 md:w-28 lg:h-32 lg:w-32 text-orange-500" />
+              </div>
               <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-8 tracking-tight text-white">
                 Tapas
               </h1>
@@ -88,8 +91,12 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-neutral-800">
         <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Flame className="h-5 w-5 text-orange-500" />
+            <span className="text-neutral-500 font-semibold">Tapas</span>
+          </div>
           <p className="text-neutral-600 text-sm text-center">
-            Tapas — 2025 · Built by{' '}
+            2025 · Built by{' '}
             <a 
               href="https://nikzone.click" 
               target="_blank" 
