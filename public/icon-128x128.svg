@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" fill="#0a0a0a"/>
+  <g transform="translate(64, 64)">
+    <!-- Flame icon -->
+    <path 
+      d="M -19.2 32 C -19.2 12.8 -10.24 -6.4 0 -32 C 10.24 -6.4 19.2 12.8 19.2 32 C 19.2 44.8 10.24 51.2 0 51.2 C -10.24 51.2 -19.2 44.8 -19.2 32 Z"
+      fill="#f97316"
+      stroke="#fb923c"
+      stroke-width="1.28"
+    />
+    <!-- Inner flame -->
+    <path 
+      d="M -10.24 25.6 C -10.24 12.8 -5.12 2.56 0 -12.8 C 5.12 2.56 10.24 12.8 10.24 25.6 C 10.24 35.84 5.12 40.96 0 40.96 C -5.12 40.96 -10.24 35.84 -10.24 25.6 Z"
+      fill="#fbbf24"
+    />
+  </g>
+</svg>

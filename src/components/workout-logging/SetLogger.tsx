@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,8 +17,6 @@ interface SetLoggerProps {
   onRemoveSet: (setId: string) => void
 }
 
-const QUICK_WEIGHTS = [2.5, 5, 7.5, 10, 12.5, 15, 20, 25, 30, 40, 45]
-
 export function SetLogger({ 
   selectedExercise,
   exerciseSets,
@@ -27,13 +25,6 @@ export function SetLogger({
   onUpdateSet,
   onRemoveSet
 }: SetLoggerProps) {
-  const [focusedSetId, setFocusedSetId] = useState<string | null>(null)
-
-  const handleQuickWeightSelect = (weight: number) => {
-    if (focusedSetId) {
-      onUpdateSet(focusedSetId, { weight })
-    }
-  }
 
   if (!selectedExercise) {
     return null
@@ -88,8 +79,6 @@ export function SetLogger({
                             inputMode="decimal"
                             placeholder="0"
                             value={set.weight || ''}
-                            onFocus={() => setFocusedSetId(set.id)}
-                            onBlur={() => setTimeout(() => setFocusedSetId(null), 200)}
                             onChange={(e) => onUpdateSet(set.id, { 
                               weight: e.target.value ? parseFloat(e.target.value) : null 
                             })}
@@ -133,30 +122,6 @@ export function SetLogger({
           </CardContent>
         </Card>
       </div>
-
-      {/* Quick Weight Selector */}
-      {focusedSetId && (
-        <div className="fixed bottom-0 left-0 right-0 bg-neutral-900 border-t-2 border-neutral-700 shadow-2xl z-50 animate-in slide-in-from-bottom-5 duration-200">
-          <div className="max-w-2xl mx-auto px-4 py-4">
-            <div className="text-sm font-semibold text-white mb-3 text-center">
-              Quick Weight (Kg)
-            </div>
-            <div className="flex flex-wrap gap-2 justify-center">
-              {QUICK_WEIGHTS.map((weight) => (
-                <Button
-                  key={weight}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleQuickWeightSelect(weight)}
-                  className="min-w-[60px] font-semibold bg-neutral-800 border-neutral-700 text-white hover:bg-white hover:text-neutral-950 hover:border-white transition-all"
-                >
-                  {weight}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

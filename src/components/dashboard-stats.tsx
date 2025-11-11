@@ -15,13 +15,13 @@ interface StatCardProps {
 export function StatCard({ title, value, change, changeType, icon }: StatCardProps) {
   return (
     <Card className="bg-neutral-900 border-neutral-800">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-neutral-300">{title}</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+        <CardTitle className="text-xs sm:text-sm font-medium text-neutral-300">{title}</CardTitle>
         <div className="text-neutral-400">{icon}</div>
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold text-white">{value}</div>
-        <p className="text-xs text-neutral-500 flex items-center">
+      <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+        <div className="text-xl sm:text-2xl font-bold text-white">{value}</div>
+        <p className="text-xs text-neutral-500 flex items-center mt-1">
           {changeType === 'increase' ? (
             <ArrowUpRight className="h-3 w-3 text-emerald-500 mr-1" />
           ) : changeType === 'decrease' ? (
@@ -36,7 +36,8 @@ export function StatCard({ title, value, change, changeType, icon }: StatCardPro
           }>
             {change}
           </span>
-          <span className="ml-1">from last month</span>
+          <span className="ml-1 hidden sm:inline">from last month</span>
+          <span className="ml-1 sm:hidden">vs last mo.</span>
         </p>
       </CardContent>
     </Card>
@@ -74,7 +75,7 @@ export async function DashboardStats() {
       : 'neutral'
 
     return (
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-2 sm:gap-3 md:gap-4 grid-cols-2">
         <StatCard
           title="Total Workouts"
           value={stats.currentMonth.totalWorkouts.toString()}
@@ -94,7 +95,7 @@ export async function DashboardStats() {
   } catch (error) {
     console.error('Error fetching dashboard stats:', error)
     return (
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-2 sm:gap-3 md:gap-4 grid-cols-2">
         <StatCard
           title="Total Workouts"
           value="0"
