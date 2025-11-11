@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
-import { X, Flame, User, Settings, LogOut, Activity } from 'lucide-react'
+import { X, Flame, User, LogOut, Activity } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { GymIcon, gymIcons } from '@/lib/gym-icons'
@@ -160,10 +160,6 @@ export function Navbar({ user }: NavbarProps) {
                   </div>
                   <hr className="border-neutral-800" />
                   <InstallAppButton />
-                  <Button variant="ghost" className="w-full justify-start text-neutral-300 hover:text-white hover:bg-neutral-800 h-10 rounded-none">
-                    <Settings className="h-4 w-4 mr-2" />
-                    Settings
-                  </Button>
                   <Button 
                     variant="ghost" 
                     className="w-full justify-start text-neutral-400 hover:text-red-400 hover:bg-neutral-800 h-10 rounded-none"
